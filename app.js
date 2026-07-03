@@ -1,4 +1,4 @@
-const STORAGE_KEY = "yaz-kampi-takip-v2";
+const STORAGE_KEY = "yaz-kampi-takip-v3";
 
 const weeks = [
   {
@@ -256,6 +256,7 @@ function renderDashboard() {
   $("#metricBadges").textContent = allBadgeCount();
 
   const activeStudent = getActiveStudent();
+  renderCharts(activeStudent);
   const weekMap = $("#weekMap");
   weekMap.innerHTML = "";
   weeks.forEach((week) => {
@@ -296,6 +297,137 @@ function renderDashboard() {
     </div>
     <div class="empty-state">${activeStudent.note || "Bu ogrenci icin ozel veli notu henuz eklenmedi."}</div>
   `;
+}
+
+function renderCharts(activeStudent) {
+  renderGroupProgressChart();
+  renderStudentTrendChart(activeStudent);
+  renderSkillChart(activeStudent);
+}
+
+function renderGroupProgressChart() {
+  const target = $("#groupProgressChart");
+  if (!target) return;
+  if (!state.students.length) {
+    target.innerHTML = chartEmpty("Ogrenci eklediginde grup ilerlemesi burada gorunecek.");
+    return;
+  }
+
+  const rows = weeks.map((week) => {
+    const completed = state.students.filter((student) => getWeeklyRecord(student, week.id).productDone).length;
+    const percent = Math.round((completed / state.students.length) * 100);
+    return `
+      <div class="bar-row">
+        <div class="bar-label">${week.id}. Hafta</div>
+        <div class="bar-track" aria-label="${week.id}. hafta ${percent}%">
+          <div class="bar-fill" style="width:${percent}%"></div>
+        </div>
+        <div class="bar-value">${completed}/${state.students.length}</div>
+      </div>
+    `;
+  }).join("");
+
+  target.innerHTML = `<div class="bar-chart">${rows}</div>`;
+}
+
+function renderStudentTrendChart(student) {
+  const target = $("#studentTrendChart");
+  if (!target) return;
+  if (!student) {
+    target.innerHTML = chartEmpty("Bir ogrenci sectiginde hafta hafta gidisat cizgisi gorunecek.");
+    return;
+  }
+
+  const points = weeks.map((week) => Math.round(completionForRecord(getWeeklyRecord(student, week.id)) * 100));
+  target.innerHTML = `<div class="line-chart">${lineChartSvg(points)}</div>`;
+}
+
+function renderSkillChart(student) {
+  const target = $("#skillChart");
+  if (!target) return;
+  if (!student) {
+    target.innerHTML = chartEmpty("Katilim, strateji ve Turkce becerisi puanlari icin once ogrenci sec.");
+    return;
+  }
+
+  const skills = [
+    { label: "Katilim", value: averageScore(student, "participation") },
+    { label: "Strateji", value: averageScore(student, "strategy") },
+    { label: "Turkce", value: averageScore(student, "turkish") },
+  ];
+
+  target.innerHTML = `
+    <div class="skill-bars">
+      ${skills.map((skill) => {
+        const percent = Math.round((skill.value / 2) * 100);
+        return `
+          <div class="skill-card">
+            <div class="skill-card-head">
+              <span>${skill.label}</span>
+              <span>${skill.value.toFixed(1)} / 2</span>
+            </div>
+            <div class="bar-track" aria-label="${skill.label} ${percent}%">
+              <div class="bar-fill" style="width:${percent}%"></div>
+            </div>
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function averageScore(student, scoreKey) {
+  const values = weeks
+    .map((week) => Number(getWeeklyRecord(student, week.id).scores?.[scoreKey] ?? 0))
+    .filter((value) => value > 0);
+  if (!values.length) return 0;
+  const total = values.reduce((sum, value) => sum + value, 0);
+  return total / values.length;
+}
+
+function lineChartSvg(values) {
+  const width = 520;
+  const height = 220;
+  const padX = 34;
+  const padTop = 20;
+  const padBottom = 34;
+  const chartHeight = height - padTop - padBottom;
+  const step = (width - padX * 2) / (values.length - 1);
+  const coords = values.map((value, index) => {
+    const x = padX + index * step;
+    const y = padTop + chartHeight - (value / 100) * chartHeight;
+    return { x, y, value, week: index + 1 };
+  });
+  const path = coords.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x} ${point.y}`).join(" ");
+  const area = `${path} L ${coords.at(-1).x} ${height - padBottom} L ${coords[0].x} ${height - padBottom} Z`;
+  const grid = [0, 25, 50, 75, 100].map((value) => {
+    const y = padTop + chartHeight - (value / 100) * chartHeight;
+    return `
+      <line x1="${padX}" y1="${y}" x2="${width - padX}" y2="${y}" stroke="#e5ebf2" />
+      <text x="6" y="${y + 4}" class="chart-axis">${value}</text>
+    `;
+  }).join("");
+  const labels = coords.map((point) => `
+    <text x="${point.x}" y="${height - 10}" text-anchor="middle" class="chart-axis">H${point.week}</text>
+  `).join("");
+  const dots = coords.map((point) => `
+    <circle cx="${point.x}" cy="${point.y}" r="5" fill="#275ca8" />
+    <text x="${point.x}" y="${point.y - 10}" text-anchor="middle" class="chart-axis">${point.value}%</text>
+  `).join("");
+
+  return `
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Haftalik gidisat grafigi">
+      <path d="${area}" fill="rgba(39, 92, 168, 0.09)"></path>
+      ${grid}
+      <path d="${path}" fill="none" stroke="#275ca8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+      ${dots}
+      ${labels}
+    </svg>
+  `;
+}
+
+function chartEmpty(message) {
+  return `<div class="chart-empty">${message}</div>`;
 }
 
 function renderStudents() {
@@ -425,6 +557,13 @@ function renderReport() {
     <section class="report-section">
       <h3>Kisa Degerlendirme</h3>
       <p>${escapeHtml(student.overallComment || autoOverall(student))}</p>
+    </section>
+
+    <section class="report-section">
+      <h3>Haftalik Gelisim Grafigi</h3>
+      <div class="report-chart">
+        ${lineChartSvg(weeks.map((week) => Math.round(completionForRecord(getWeeklyRecord(student, week.id)) * 100)))}
+      </div>
     </section>
 
     <section class="report-section">

@@ -19,23 +19,23 @@
 
         <nav class="nav" aria-label="Ana bolumler">
           <button class="nav-item active" data-view="dashboard" type="button">
-            <span aria-hidden="true">⌂</span>
+            <span aria-hidden="true">01</span>
             Genel Bakis
           </button>
           <button class="nav-item" data-view="students" type="button">
-            <span aria-hidden="true">＋</span>
+            <span aria-hidden="true">02</span>
             Ogrenciler
           </button>
           <button class="nav-item" data-view="weekly" type="button">
-            <span aria-hidden="true">□</span>
+            <span aria-hidden="true">03</span>
             Haftalik Takip
           </button>
           <button class="nav-item" data-view="report" type="button">
-            <span aria-hidden="true">◉</span>
+            <span aria-hidden="true">04</span>
             Veli Raporu
           </button>
           <button class="nav-item" data-view="data" type="button">
-            <span aria-hidden="true">⇅</span>
+            <span aria-hidden="true">05</span>
             Yedek
           </button>
         </nav>
@@ -53,7 +53,7 @@
             <h2 id="pageTitle">Genel Bakis</h2>
           </div>
           <div class="topbar-actions">
-            <button class="icon-button" id="saveSnapshot" title="Yedek indir" type="button">⇩</button>
+            <button class="icon-button" id="saveSnapshot" title="Yedek indir" type="button">↓</button>
             <button class="primary-action" id="printReport" type="button">Raporu Yazdir</button>
           </div>
         </section>
@@ -76,6 +76,32 @@
               <span>Verilen rozet</span>
               <strong id="metricBadges">0</strong>
             </article>
+          </div>
+
+          <div class="analytics-grid">
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <h3>Grup Ilerlemesi</h3>
+                <p>Tum ogrencilerin 8 haftalik urun tamamlama durumu.</p>
+              </div>
+              <div class="chart-box" id="groupProgressChart"></div>
+            </section>
+
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <h3>Ogrenci Gidisati</h3>
+                <p>Secili ogrencinin hafta hafta ilerleme yuzdesi.</p>
+              </div>
+              <div class="chart-box" id="studentTrendChart"></div>
+            </section>
+
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <h3>Beceri Puanlari</h3>
+                <p>Katilim, strateji kullanimi ve Turkce beceri ortalamasi.</p>
+              </div>
+              <div class="chart-box" id="skillChart"></div>
+            </section>
           </div>
 
           <div class="dashboard-grid">
