@@ -1,4 +1,5 @@
 const STORAGE_KEY = "yaz-kampi-takip-v4";
+const LEGACY_STORAGE_KEYS = ["yaz-kampi-takip-v3", "yaz-kampi-takip-v2", "yaz-kampi-takip-v1"];
 
 const weeks = [
   {
@@ -88,15 +89,17 @@ const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
 function loadState() {
-  const raw = localStorage.getItem(STORAGE_KEY);
+  const raw = localStorage.getItem(STORAGE_KEY) || LEGACY_STORAGE_KEYS.map((key) => localStorage.getItem(key)).find(Boolean);
   if (!raw) return structuredClone(defaultState);
   try {
     const parsed = JSON.parse(raw);
-    return {
+    const migrated = {
       ...structuredClone(defaultState),
       ...parsed,
       students: Array.isArray(parsed.students) ? parsed.students : [],
     };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+    return migrated;
   } catch {
     return structuredClone(defaultState);
   }
@@ -236,6 +239,11 @@ function render() {
     report: "Veli Raporu",
     data: "Yedek",
   };
+
+  if (!titles[state.activeView]) {
+    state.activeView = "dashboard";
+    saveState();
+  }
 
   $$(".nav-item").forEach((button) => {
     button.classList.toggle("active", button.dataset.view === state.activeView);
@@ -1131,6 +1139,7 @@ function bindEvents() {
   });
 
   $("#printReport").addEventListener("click", () => {
+    delete document.body.dataset.printMode;
     state.activeView = "report";
     saveState();
     render();
@@ -1188,10 +1197,12 @@ function printOutput(mode) {
   saveState();
   render();
   document.body.dataset.printMode = mode;
-  window.print();
-  setTimeout(() => {
+  const clearPrintMode = () => {
     delete document.body.dataset.printMode;
-  }, 500);
+    window.removeEventListener("afterprint", clearPrintMode);
+  };
+  window.addEventListener("afterprint", clearPrintMode);
+  window.print();
 }
 
 function downloadJson() {

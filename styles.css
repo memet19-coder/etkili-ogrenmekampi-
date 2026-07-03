@@ -692,6 +692,10 @@ body {
   gap: 16px;
 }
 
+.brand > div:last-child {
+  min-width: 0;
+}
+
 .brand-mark {
   width: 76px;
   height: 76px;
@@ -717,7 +721,9 @@ body {
 }
 
 .brand h1 {
-  font-size: 22px;
+  max-width: 180px;
+  font-size: 21px;
+  line-height: 1.18;
   letter-spacing: 0;
 }
 
