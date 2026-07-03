@@ -128,6 +128,14 @@ function blankWeeklyRecord(weekId) {
     artifact: "",
     teacherNote: "",
     studentReflection: "",
+    parentMessage: "",
+    selfReview: {
+      mood: "",
+      effort: 0,
+      goal: "",
+      bestStrategy: "",
+      score: 0,
+    },
     recommendation: "",
     badges: [],
     portfolio: {
@@ -176,6 +184,10 @@ function getWeeklyRecord(student, weekId = state.activeWeek) {
     portfolio: {
       ...blank.portfolio,
       ...(student.weekly[weekId].portfolio || {}),
+    },
+    selfReview: {
+      ...blank.selfReview,
+      ...(student.weekly[weekId].selfReview || {}),
     },
   };
   return student.weekly[weekId];
@@ -236,6 +248,9 @@ function render() {
     portfolio: "Portfolyo",
     quick: "Hızlı Giriş",
     outputs: "Çıktılar",
+    parentPanel: "Veli Paneli",
+    showcase: "Başarı Vitrini",
+    studentSelf: "Öz Değerlendirme",
     report: "Veli Raporu",
     data: "Yedek",
   };
@@ -260,6 +275,9 @@ function render() {
   renderPortfolio();
   renderQuickEntry();
   renderOutputs();
+  renderParentPanel();
+  renderShowcase();
+  renderStudentSelfReview();
   renderReport();
 }
 
@@ -563,6 +581,45 @@ function chartEmpty(message) {
   return `<div class="chart-empty">${message}</div>`;
 }
 
+function buildTeacherSuggestion(student, weekId = state.activeWeek) {
+  if (!student) return "";
+  const week = weeks.find((item) => item.id === Number(weekId)) || weeks[0];
+  const record = getWeeklyRecord(student, week.id);
+  const strengths = [];
+  if (record.attendance) strengths.push("derse katılım gösterdi");
+  if (record.productDone) strengths.push("haftalık ürünü tamamladı");
+  if (record.reflectionDone || record.studentReflection) strengths.push("kendi öğrenmesi üzerine düşündü");
+  if (record.scores.strategy >= 2) strengths.push("öğrenme stratejisini bağımsız kullanmaya başladı");
+  if (record.scores.turkish >= 2) strengths.push("Türkçe beceri çalışmasında güçlü performans gösterdi");
+  const strengthText = strengths.length ? strengths.join(", ") : "bu haftaki beceriyi tanıma aşamasında";
+  const next = record.productDone
+    ? "Bu kazanımın kalıcı olması için aynı yöntemi hafta içinde kısa tekrarlarla sürdürmesi yararlı olur."
+    : "Haftalık ürün tamamlandığında gelişim kanıtı daha görünür hale gelecektir.";
+  return `${student.name}, ${week.title} çalışmasında ${strengthText}. ${next}`;
+}
+
+function buildParentSuggestion(student, weekId = state.activeWeek) {
+  if (!student) return "";
+  const week = weeks.find((item) => item.id === Number(weekId)) || weeks[0];
+  const record = getWeeklyRecord(student, week.id);
+  const productText = record.productDone
+    ? "Haftalık ürününü tamamladı ve bu ürün gelişim dosyasına eklendi."
+    : "Haftalık ürününü tamamlaması için küçük bir hatırlatma faydalı olabilir.";
+  const selfText = record.studentReflection
+    ? `Öğrencimizin kendi cümlesi: "${record.studentReflection}"`
+    : "Öğrenci yansıtması eklendiğinde süreci kendi gözünden de takip edebileceğiz.";
+  const support = record.recommendation || "Evde kısa, sakin ve bölünmeyen bir çalışma zamanı oluşturmanız yeterli olacaktır.";
+  return `Merhaba, bu hafta ${student.name} ile "${week.title}" üzerine çalıştık. ${productText} ${selfText} Ev desteği için önerim: ${support}`;
+}
+
+function latestMeaningfulWeek(student) {
+  if (!student) return weeks[0];
+  return [...weeks].reverse().find((week) => {
+    const record = getWeeklyRecord(student, week.id);
+    return record.attendance || record.productDone || record.teacherNote || record.parentMessage || record.studentReflection || record.artifact;
+  }) || weeks[0];
+}
+
 function portfolioItemsForStudent(student) {
   if (!student) return [];
   return weeks.map((week) => {
@@ -653,7 +710,11 @@ function renderWeeklyForm() {
   $("#scoreTurkish").value = String(record.scores.turkish ?? 0);
   $("#artifact").value = record.artifact || "";
   $("#teacherNote").value = record.teacherNote || "";
+  $("#parentMessage").value = record.parentMessage || "";
   $("#studentReflection").value = record.studentReflection || "";
+  $("#studentMood").value = record.selfReview.mood || "";
+  $("#studentEffort").value = String(record.selfReview.effort || 0);
+  $("#studentGoal").value = record.selfReview.goal || "";
   $("#portfolioTitle").value = record.portfolio.title || "";
   $("#portfolioType").value = record.portfolio.type || "Çalışma formu";
   $("#portfolioLink").value = record.portfolio.link || "";
@@ -993,6 +1054,156 @@ function renderOutputs() {
   whatsapp.value = buildWhatsappMessage(activeStudent);
 }
 
+function renderParentPanel() {
+  const student = getActiveStudent();
+  const weekSelect = $("#parentPanelWeek");
+  const paper = $("#parentPanelPaper");
+  const text = $("#parentPanelText");
+  if (!weekSelect || !paper || !text) return;
+
+  weekSelect.innerHTML = "";
+  weeks.forEach((week) => {
+    const option = document.createElement("option");
+    option.value = week.id;
+    option.textContent = `${week.id}. Hafta - ${week.title}`;
+    option.selected = week.id === Number(state.activeWeek);
+    weekSelect.append(option);
+  });
+
+  if (!student) {
+    paper.innerHTML = '<div class="empty-state">Veli paneli oluşturmak için önce öğrenci ekle.</div>';
+    text.value = "";
+    return;
+  }
+
+  const week = weeks.find((item) => item.id === Number(state.activeWeek)) || latestMeaningfulWeek(student);
+  const record = getWeeklyRecord(student, week.id);
+  const parentText = record.parentMessage || buildParentSuggestion(student, week.id);
+  text.value = parentText;
+
+  paper.innerHTML = `
+    <header>
+      <div>
+        <img class="document-logo" src="assets/mg-logo-cropped.png" alt="MG logo">
+        <p class="eyebrow">Haftalık veli paneli</p>
+        <h2>${escapeHtml(student.name)}</h2>
+      </div>
+      <div class="report-meta">
+        ${student.grade}<br>
+        ${week.id}. Hafta<br>
+        ${week.title}
+      </div>
+    </header>
+    <section class="parent-panel-grid">
+      <article><span>Katılım</span><strong>${record.attendance ? "Katıldı" : "Bekliyor"}</strong></article>
+      <article><span>Ürün</span><strong>${record.productDone ? "Tamamlandı" : "Eksik"}</strong></article>
+      <article><span>Öz Değerlendirme</span><strong>${record.reflectionDone || record.studentReflection ? "Var" : "Bekliyor"}</strong></article>
+      <article><span>Portfolyo</span><strong>${portfolioItemsForStudent(student).length}</strong></article>
+    </section>
+    <section class="report-section">
+      <h3>Bu Hafta Ne Çalıştık?</h3>
+      <p>${escapeHtml(week.parentEvidence)}</p>
+    </section>
+    <section class="report-section">
+      <h3>Öğretmen Gözlemi</h3>
+      <p>${escapeHtml(record.teacherNote || buildTeacherSuggestion(student, week.id))}</p>
+    </section>
+    <section class="report-section">
+      <h3>Öğrencinin Sesi</h3>
+      <p>${escapeHtml(record.studentReflection || record.selfReview.goal || "Bu hafta için öğrenci cümlesi henüz eklenmedi.")}</p>
+    </section>
+    <section class="report-section">
+      <h3>Ev İçin Küçük Öneri</h3>
+      <p>${escapeHtml(record.recommendation || autoNextStep(student))}</p>
+    </section>
+  `;
+}
+
+function renderShowcase() {
+  const student = getActiveStudent();
+  const paper = $("#showcasePaper");
+  if (!paper) return;
+  if (!student) {
+    paper.innerHTML = '<div class="empty-state">Başarı vitrini oluşturmak için önce öğrenci ekle.</div>';
+    return;
+  }
+
+  const items = portfolioItemsForStudent(student);
+  const selected = (items.filter((item) => item.showcase).length ? items.filter((item) => item.showcase) : items).slice(0, 4);
+  paper.innerHTML = `
+    <header>
+      <div>
+        <img class="document-logo" src="assets/mg-logo-cropped.png" alt="MG logo">
+        <p class="eyebrow">Öğrenci başarı vitrini</p>
+        <h2>${escapeHtml(student.name)}</h2>
+      </div>
+      <div class="report-meta">
+        İlerleme: ${progressForStudent(student)}%<br>
+        Ürün: ${productCountForStudent(student)}/8<br>
+        Portfolyo: ${items.length}
+      </div>
+    </header>
+    <section class="showcase-hero">
+      <h3>Öne Çıkan Çalışmalar</h3>
+      <p>Bu sayfa öğrencinin süreç içinde ürettiği somut çalışmaları ve gelişim kanıtlarını görünür kılar.</p>
+    </section>
+    <section class="showcase-grid">
+      ${selected.map((item) => `
+        <article>
+          <span>${item.weekId}. Hafta</span>
+          <h4>${escapeHtml(item.title)}</h4>
+          <p>${escapeHtml(item.note || item.artifact || "Ürün açıklaması eklenecek.")}</p>
+          <strong>${escapeHtml(item.type)}</strong>
+        </article>
+      `).join("") || '<div class="empty-state">Henüz vitrine eklenecek portfolyo ürünü yok.</div>'}
+    </section>
+  `;
+}
+
+function renderStudentSelfReview() {
+  const student = getActiveStudent();
+  const weekSelect = $("#selfWeekSelect");
+  const list = $("#selfReviewList");
+  if (!weekSelect || !list) return;
+
+  weekSelect.innerHTML = "";
+  weeks.forEach((week) => {
+    const option = document.createElement("option");
+    option.value = week.id;
+    option.textContent = `${week.id}. Hafta - ${week.title}`;
+    option.selected = week.id === Number(state.activeWeek);
+    weekSelect.append(option);
+  });
+
+  if (!student) {
+    $("#selfReflectionInput").value = "";
+    $("#selfBestStrategy").value = "";
+    $("#selfNextGoal").value = "";
+    $("#selfScore").value = "0";
+    list.innerHTML = '<div class="empty-state">Öz değerlendirme için önce öğrenci ekle.</div>';
+    return;
+  }
+
+  const record = getWeeklyRecord(student, Number(state.activeWeek));
+  $("#selfReflectionInput").value = record.studentReflection || "";
+  $("#selfBestStrategy").value = record.selfReview.bestStrategy || "";
+  $("#selfNextGoal").value = record.selfReview.goal || "";
+  $("#selfScore").value = String(record.selfReview.score || 0);
+
+  const entries = weeks.map((week) => {
+    const item = getWeeklyRecord(student, week.id);
+    if (!item.studentReflection && !item.selfReview.goal && !item.selfReview.bestStrategy) return "";
+    return `
+      <article class="self-review-item">
+        <strong>${week.id}. Hafta - ${week.title}</strong>
+        <p>${escapeHtml(item.studentReflection || "Yansıtma yok.")}</p>
+        <span>Yöntem: ${escapeHtml(item.selfReview.bestStrategy || "Eklenmedi")} · Hedef: ${escapeHtml(item.selfReview.goal || "Eklenmedi")} · Puan: ${item.selfReview.score || 0}/4</span>
+      </article>
+    `;
+  }).join("");
+  list.innerHTML = entries || '<div class="empty-state">Henüz öğrenci öz değerlendirmesi yok.</div>';
+}
+
 function buildWhatsappMessage(student) {
   if (!student) {
     return "Merhaba, bu hafta Etkili Öğrenme Kampı kapsamında öğrencilerimizle planlı çalışma, okuma-anlama ve öğrenme stratejileri üzerine uygulamalı çalışmalar yaptık. Öğrenci seçildiğinde bu alanda kişisel veli mesajı oluşacaktır.";
@@ -1002,7 +1213,7 @@ function buildWhatsappMessage(student) {
     return record.attendance || record.productDone || record.teacherNote || record.artifact;
   }) || weeks[0];
   const record = getWeeklyRecord(student, latestWeek.id);
-  return `Merhaba, ${student.name} için kısa kamp bilgilendirmesi paylaşmak istedim. ${latestWeek.id}. haftada "${latestWeek.title}" üzerine çalıştık. ${record.artifact || "Haftalık ürün/kanıt kaydı henüz tamamlanmadı."} Öğretmen gözlemim: ${record.teacherNote || "Gözlem notu eklenecek."} Yeni dönem için önerim: ${record.recommendation || autoNextStep(student)} Teşekkür ederim.`;
+  return record.parentMessage || `Merhaba, ${student.name} için kısa kamp bilgilendirmesi paylaşmak istedim. ${latestWeek.id}. haftada "${latestWeek.title}" üzerine çalıştık. ${record.artifact || "Haftalık ürün/kanıt kaydı henüz tamamlanmadı."} Öğretmen gözlemim: ${record.teacherNote || "Gözlem notu eklenecek."} Yeni dönem için önerim: ${record.recommendation || autoNextStep(student)} Teşekkür ederim.`;
 }
 
 function autoOverall(student) {
@@ -1099,6 +1310,18 @@ function bindEvents() {
     render();
   });
 
+  $("#parentPanelWeek").addEventListener("change", (event) => {
+    state.activeWeek = Number(event.target.value);
+    saveState();
+    render();
+  });
+
+  $("#selfWeekSelect").addEventListener("change", (event) => {
+    state.activeWeek = Number(event.target.value);
+    saveState();
+    renderStudentSelfReview();
+  });
+
   $("#weeklyForm").addEventListener("submit", (event) => {
     event.preventDefault();
     const student = getActiveStudent();
@@ -1115,7 +1338,14 @@ function bindEvents() {
     };
     record.artifact = $("#artifact").value.trim();
     record.teacherNote = $("#teacherNote").value.trim();
+    record.parentMessage = $("#parentMessage").value.trim();
     record.studentReflection = $("#studentReflection").value.trim();
+    record.selfReview = {
+      ...record.selfReview,
+      mood: $("#studentMood").value,
+      effort: Number($("#studentEffort").value),
+      goal: $("#studentGoal").value.trim(),
+    };
     record.portfolio = {
       title: $("#portfolioTitle").value.trim(),
       type: $("#portfolioType").value,
@@ -1150,20 +1380,28 @@ function bindEvents() {
   $("#downloadJson").addEventListener("click", downloadJson);
   $("#downloadCsv").addEventListener("click", downloadCsv);
   $("#saveQuickEntry").addEventListener("click", saveQuickEntry);
+  $("#suggestTeacherNote").addEventListener("click", () => {
+    const student = getActiveStudent();
+    if (!student) return;
+    $("#teacherNote").value = buildTeacherSuggestion(student, Number(state.activeWeek));
+  });
+  $("#suggestParentMessage").addEventListener("click", () => {
+    const student = getActiveStudent();
+    if (!student) return;
+    $("#parentMessage").value = buildParentSuggestion(student, Number(state.activeWeek));
+  });
   $("#markAllAttendance").addEventListener("click", () => markQuickCheckboxes("attendance", true));
   $("#markAllFamilyShared").addEventListener("click", () => markQuickCheckboxes("familyShared", true));
   $("#printClassSummary").addEventListener("click", () => printOutput("class-summary"));
   $("#printCertificate").addEventListener("click", () => printOutput("certificate"));
+  $("#printParentPanel").addEventListener("click", () => printOutput("parent-panel"));
+  $("#printShowcase").addEventListener("click", () => printOutput("showcase"));
+  $("#copyParentPanelText").addEventListener("click", async () => {
+    await copyTextFrom("#parentPanelText", "Veli paneli metni kopyalandı.");
+  });
+  $("#saveSelfReview").addEventListener("click", saveSelfReview);
   $("#copyWhatsappMessage").addEventListener("click", async () => {
-    const message = $("#whatsappMessage").value;
-    try {
-      await navigator.clipboard.writeText(message);
-      alert("WhatsApp metni kopyalandı.");
-    } catch {
-      $("#whatsappMessage").select();
-      document.execCommand("copy");
-      alert("WhatsApp metni kopyalandı.");
-    }
+    await copyTextFrom("#whatsappMessage", "WhatsApp metni kopyalandı.");
   });
 
   $("#restoreFile").addEventListener("change", async (event) => {
@@ -1193,16 +1431,56 @@ function bindEvents() {
 }
 
 function printOutput(mode) {
-  state.activeView = "outputs";
+  const previousView = state.activeView;
+  const printViews = {
+    "class-summary": "outputs",
+    certificate: "outputs",
+    "parent-panel": "parentPanel",
+    showcase: "showcase",
+  };
+  state.activeView = printViews[mode] || previousView;
   saveState();
   render();
   document.body.dataset.printMode = mode;
   const clearPrintMode = () => {
     delete document.body.dataset.printMode;
+    state.activeView = previousView;
+    saveState();
+    render();
     window.removeEventListener("afterprint", clearPrintMode);
   };
   window.addEventListener("afterprint", clearPrintMode);
   window.print();
+}
+
+async function copyTextFrom(selector, successMessage) {
+  const element = $(selector);
+  const message = element?.value || element?.textContent || "";
+  try {
+    await navigator.clipboard.writeText(message);
+    alert(successMessage);
+  } catch {
+    if (element?.select) element.select();
+    document.execCommand("copy");
+    alert(successMessage);
+  }
+}
+
+function saveSelfReview() {
+  const student = getActiveStudent();
+  if (!student) return;
+  const weekId = Number(state.activeWeek);
+  const record = getWeeklyRecord(student, weekId);
+  record.studentReflection = $("#selfReflectionInput").value.trim();
+  record.reflectionDone = Boolean(record.studentReflection);
+  record.selfReview = {
+    ...record.selfReview,
+    bestStrategy: $("#selfBestStrategy").value.trim(),
+    goal: $("#selfNextGoal").value.trim(),
+    score: Number($("#selfScore").value),
+  };
+  saveState();
+  render();
 }
 
 function downloadJson() {

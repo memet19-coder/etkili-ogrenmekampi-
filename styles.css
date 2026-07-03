@@ -1241,7 +1241,9 @@ textarea:focus {
 }
 
 .output-paper,
-.certificate-paper {
+.certificate-paper,
+.parent-panel-paper,
+.showcase-paper {
   background: #fff;
   border: 1px solid #dfe5ee;
   border-radius: 8px;
@@ -1249,7 +1251,9 @@ textarea:focus {
   box-shadow: var(--shadow);
 }
 
-.output-paper header {
+.output-paper header,
+.parent-panel-paper header,
+.showcase-paper header {
   display: flex;
   justify-content: space-between;
   gap: 18px;
@@ -1265,8 +1269,130 @@ textarea:focus {
   margin-bottom: 8px;
 }
 
+.suggestion-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.self-review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.parent-panel-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.parent-panel-grid article {
+  padding: 14px;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  background: #fbfcfe;
+}
+
+.parent-panel-grid span {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.parent-panel-grid strong {
+  display: block;
+  margin-top: 6px;
+  color: #142033;
+}
+
+.showcase-hero {
+  margin-top: 20px;
+  padding: 18px;
+  border-radius: 8px;
+  background: #edf4ff;
+}
+
+.showcase-hero h3,
+.showcase-hero p {
+  margin: 0;
+}
+
+.showcase-hero p {
+  margin-top: 6px;
+  color: var(--muted);
+}
+
+.showcase-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.showcase-grid article {
+  min-height: 160px;
+  padding: 16px;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.showcase-grid span {
+  color: var(--teal);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.showcase-grid h4 {
+  margin: 8px 0;
+  color: #142033;
+}
+
+.showcase-grid p {
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.showcase-grid strong {
+  display: inline-block;
+  margin-top: 8px;
+  border-radius: 999px;
+  padding: 6px 9px;
+  background: #fff1e5;
+  color: #a44812;
+  font-size: 12px;
+}
+
+.self-review-list {
+  display: grid;
+  gap: 10px;
+}
+
+.self-review-item {
+  padding: 14px;
+  border: 1px solid #dfe5ee;
+  border-radius: 8px;
+  background: #fbfcfe;
+}
+
+.self-review-item p {
+  margin: 8px 0;
+  color: #38475d;
+}
+
+.self-review-item span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
 .output-paper h2,
-.certificate-paper h2 {
+.certificate-paper h2,
+.parent-panel-paper h2,
+.showcase-paper h2 {
   margin: 0;
   color: #142033;
 }
@@ -1572,6 +1698,9 @@ textarea:focus {
   .portfolio-fields,
   .portfolio-grid,
   .report-portfolio,
+  .parent-panel-grid,
+  .showcase-grid,
+  .self-review-grid,
   .check-grid,
   .score-grid,
   .brief-grid {
@@ -1609,7 +1738,7 @@ textarea:focus {
   .topbar,
   .report-controls,
   .outputs-layout > .panel,
-  .view:not(#reportView):not(#outputsView) {
+  .view:not(#reportView):not(#outputsView):not(#parentPanelView):not(#showcaseView) {
     display: none !important;
   }
 
@@ -1628,12 +1757,18 @@ textarea:focus {
   }
 
   body[data-print-mode="class-summary"] #reportView,
-  body[data-print-mode="certificate"] #reportView {
+  body[data-print-mode="certificate"] #reportView,
+  body[data-print-mode="parent-panel"] #reportView,
+  body[data-print-mode="showcase"] #reportView,
+  body[data-print-mode="parent-panel"] #outputsView,
+  body[data-print-mode="showcase"] #outputsView {
     display: none !important;
   }
 
   body[data-print-mode="class-summary"] #outputsView,
-  body[data-print-mode="certificate"] #outputsView {
+  body[data-print-mode="certificate"] #outputsView,
+  body[data-print-mode="parent-panel"] #parentPanelView,
+  body[data-print-mode="showcase"] #showcaseView {
     display: block !important;
   }
 
@@ -1643,7 +1778,9 @@ textarea:focus {
   }
 
   body[data-print-mode="class-summary"] .output-paper,
-  body[data-print-mode="certificate"] .certificate-paper {
+  body[data-print-mode="certificate"] .certificate-paper,
+  body[data-print-mode="parent-panel"] .parent-panel-paper,
+  body[data-print-mode="showcase"] .showcase-paper {
     border: 0;
     box-shadow: none;
   }
@@ -1665,6 +1802,8 @@ textarea:focus {
 
   .report-paper,
   .output-paper,
+  .parent-panel-paper,
+  .showcase-paper,
   body:not([data-print-mode="certificate"]) .certificate-paper {
     border: 0;
     box-shadow: none;

@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Etkili Öğrenme Kampı Takip</title>
-    <link rel="stylesheet" href="styles.css?v=az-audit" />
+    <link rel="stylesheet" href="styles.css?v=parent-showcase-self" />
   </head>
   <body>
     <div class="app-shell">
@@ -44,12 +44,24 @@
             <span aria-hidden="true">06</span>
             Çıktılar
           </button>
-          <button class="nav-item" data-view="report" type="button">
+          <button class="nav-item" data-view="parentPanel" type="button">
             <span aria-hidden="true">07</span>
+            Veli Paneli
+          </button>
+          <button class="nav-item" data-view="showcase" type="button">
+            <span aria-hidden="true">08</span>
+            Başarı Vitrini
+          </button>
+          <button class="nav-item" data-view="studentSelf" type="button">
+            <span aria-hidden="true">09</span>
+            Öz Değerlendirme
+          </button>
+          <button class="nav-item" data-view="report" type="button">
+            <span aria-hidden="true">10</span>
             Veli Raporu
           </button>
           <button class="nav-item" data-view="data" type="button">
-            <span aria-hidden="true">08</span>
+            <span aria-hidden="true">11</span>
             Yedek
           </button>
         </nav>
@@ -267,10 +279,43 @@
                 Öğretmen gözlemi
                 <textarea id="teacherNote" rows="4" placeholder="Somut ve veliye anlatılabilir gözlem notu"></textarea>
               </label>
+              <div class="suggestion-row">
+                <button class="secondary-action" id="suggestTeacherNote" type="button">Otomatik Yorum Öner</button>
+                <button class="secondary-action" id="suggestParentMessage" type="button">Veli Mesajı Öner</button>
+              </div>
+              <label>
+                Haftalık veli mesajı
+                <textarea id="parentMessage" rows="3" placeholder="Bu hafta veliye gönderilecek kısa ve kişisel mesaj"></textarea>
+              </label>
               <label>
                 Öğrencinin kendi cümlesi
                 <textarea id="studentReflection" rows="3" placeholder="Örnek: Kısa çalışınca daha kolay başladığımı fark ettim."></textarea>
               </label>
+              <div class="self-review-grid">
+                <label>
+                  Öğrenci duygu durumu
+                  <select id="studentMood">
+                    <option value="">Seçilmedi</option>
+                    <option>Motivasyonum arttı</option>
+                    <option>Daha düzenli hissettim</option>
+                    <option>Zorlandım ama denedim</option>
+                    <option>Biraz desteğe ihtiyacım var</option>
+                  </select>
+                </label>
+                <label>
+                  Öğrenci çabası
+                  <select id="studentEffort">
+                    <option value="0">0 - Seçilmedi</option>
+                    <option value="1">1 - Az denedim</option>
+                    <option value="2">2 - Düzenli denedim</option>
+                    <option value="3">3 - Elimden geleni yaptım</option>
+                  </select>
+                </label>
+                <label>
+                  Öğrencinin hedefi
+                  <input id="studentGoal" placeholder="Gelecek hafta neyi deneyeceğim?" />
+                </label>
+              </div>
               <div class="portfolio-fields">
                 <label>
                   Portfolyo başlığı
@@ -393,6 +438,93 @@
           </div>
         </section>
 
+        <section class="view" id="parentPanelView" aria-labelledby="pageTitle">
+          <div class="outputs-layout">
+            <section class="panel">
+              <div class="section-head">
+                <h3>Veli Paneli Çıktısı</h3>
+                <p>Velinin hızlıca anlayacağı tek sayfalık haftalık durum özeti.</p>
+              </div>
+              <label>
+                Panel haftası
+                <select id="parentPanelWeek"></select>
+              </label>
+              <div class="output-actions">
+                <button class="primary-action" id="printParentPanel" type="button">Veli Panelini Yazdır</button>
+                <button class="secondary-action" id="copyParentPanelText" type="button">Kısa Metni Kopyala</button>
+              </div>
+              <label>
+                Kısa veli metni
+                <textarea id="parentPanelText" rows="6"></textarea>
+              </label>
+            </section>
+
+            <article class="parent-panel-paper" id="parentPanelPaper"></article>
+          </div>
+        </section>
+
+        <section class="view" id="showcaseView" aria-labelledby="pageTitle">
+          <div class="outputs-layout">
+            <section class="panel">
+              <div class="section-head">
+                <h3>Öğrenci Başarı Vitrini</h3>
+                <p>Öne çıkan portfolyo ürünlerinden öğrenciye özel başarı sayfası hazırla.</p>
+              </div>
+              <div class="output-actions">
+                <button class="primary-action" id="printShowcase" type="button">Vitrini Yazdır</button>
+              </div>
+            </section>
+
+            <article class="showcase-paper" id="showcasePaper"></article>
+          </div>
+        </section>
+
+        <section class="view" id="studentSelfView" aria-labelledby="pageTitle">
+          <div class="two-column">
+            <section class="panel">
+              <div class="section-head">
+                <h3>Öğrenci Öz Değerlendirme</h3>
+                <p>Öğrencinin kendi sesiyle haftalık gelişimini görünür kıl.</p>
+              </div>
+              <label>
+                Hafta
+                <select id="selfWeekSelect"></select>
+              </label>
+              <label>
+                Bu hafta kendimle ilgili fark ettiğim şey
+                <textarea id="selfReflectionInput" rows="4"></textarea>
+              </label>
+              <label>
+                En çok işe yarayan yöntem
+                <input id="selfBestStrategy" placeholder="Örnek: 20 dakika odak çalışması" />
+              </label>
+              <label>
+                Gelecek hafta hedefim
+                <input id="selfNextGoal" placeholder="Örnek: 3 gün kısa tekrar yapmak" />
+              </label>
+              <label>
+                Kendime puanım
+                <select id="selfScore">
+                  <option value="0">Seçilmedi</option>
+                  <option value="1">1 - Yeni başlıyorum</option>
+                  <option value="2">2 - Denedim</option>
+                  <option value="3">3 - İyi ilerledim</option>
+                  <option value="4">4 - Çok iyi uyguladım</option>
+                </select>
+              </label>
+              <button class="primary-action" id="saveSelfReview" type="button">Öz Değerlendirmeyi Sakla</button>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <h3>Öğrencinin Sesinden</h3>
+                <p>Bu alan rapor ve veli paneline anlamlı alıntılar taşır.</p>
+              </div>
+              <div class="self-review-list" id="selfReviewList"></div>
+            </section>
+          </div>
+        </section>
+
         <section class="view" id="reportView" aria-labelledby="pageTitle">
           <div class="report-layout">
             <section class="panel report-controls">
@@ -442,6 +574,6 @@
       </main>
     </div>
 
-    <script src="app.js?v=az-audit"></script>
+    <script src="app.js?v=parent-showcase-self"></script>
   </body>
 </html>
