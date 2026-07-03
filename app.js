@@ -823,7 +823,7 @@ function renderReport() {
   paper.innerHTML = `
     <header>
       <div>
-        <img class="document-logo" src="assets/mg-logo.png" alt="MG logo">
+        <img class="document-logo" src="assets/mg-logo-cropped.png" alt="MG logo">
         <p class="eyebrow">8 haftalık öğrenme pasaportu</p>
         <h2>${escapeHtml(student.name)} - Veli Gelişim Raporu</h2>
       </div>
@@ -919,7 +919,7 @@ function renderOutputs() {
   summary.innerHTML = `
     <header>
       <div>
-        <img class="document-logo" src="assets/mg-logo.png" alt="MG logo">
+        <img class="document-logo" src="assets/mg-logo-cropped.png" alt="MG logo">
         <p class="eyebrow">Etkili Öğrenme Kampı sınıf özeti</p>
         <h2>8 Haftalık Grup Gelişim Raporu</h2>
       </div>
@@ -951,10 +951,10 @@ function renderOutputs() {
   certificate.innerHTML = `
     <div class="certificate-inner">
       <div class="certificate-watermark" aria-hidden="true">
-        <img src="assets/mg-logo.png" alt="">
+        <img src="assets/mg-logo-cropped.png" alt="">
       </div>
       <div class="certificate-top">
-        <img class="certificate-logo" src="assets/mg-logo.png" alt="MG logo">
+        <img class="certificate-logo" src="assets/mg-logo-cropped.png" alt="MG logo">
         <div>
           <p class="eyebrow">8 Haftalık Etkili Öğrenme Kampı</p>
           <h3>Katılım ve Gelişim Belgesi</h3>
