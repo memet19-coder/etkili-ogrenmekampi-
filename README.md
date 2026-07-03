@@ -1,20 +1,20 @@
-# Yaz Kampi Takip Uygulamasi
+# Yaz Kampı Takip Uygulaması
 
-Bu uygulama 8 haftalik yaz kampi icin ogrenci takibi, haftalik kanit kaydi, rozetler ve veli gelisim raporu hazirlamak icin tasarlandi.
+Bu uygulama 8 haftalık yaz kampı için öğrenci takibi, haftalık kanıt kaydı, rozetler ve veli gelişim raporu hazırlamak için tasarlandı.
 
-## Yerel kullanim
+## Yerel kullanım
 
-1. `index.html` dosyasini tarayicida ac.
-2. Ogrencileri ekle.
-3. Her hafta `Haftalik Takip` bolumunden kayitlari doldur.
-4. `Veli Raporu` bolumunden raporu kontrol et ve yazdir.
-5. `Yedek` bolumunden duzenli olarak JSON yedegi indir.
+1. `index.html` dosyasını tarayıcıda aç.
+2. Öğrencileri ekle.
+3. Her hafta `Haftalık Takip` bölümünden kayıtları doldur.
+4. `Veli Raporu` bölümünden raporu kontrol et ve yazdır.
+5. `Yedek` bölümünden düzenli olarak JSON yedeği indir.
 
-Veriler tarayicinin yerel hafizasinda saklanir. Bilgisayar veya tarayici degistirmeden once JSON yedegi almak gerekir.
+Veriler tarayıcının yerel hafızasında saklanır. Bilgisayar veya tarayıcı değiştirmeden önce JSON yedeği almak gerekir.
 
 ## GitHub'a koyma
 
-Bu klasor statik bir web uygulamasidir. GitHub Pages ile yayinlanabilir.
+Bu klasör statik bir web uygulamasıdır. GitHub Pages ile yayınlanabilir.
 
 ```bash
 git init
@@ -25,8 +25,8 @@ git remote add origin GITHUB_REPO_ADRESI
 git push -u origin main
 ```
 
-GitHub repo ayarlarindan Pages bolumunde kaynak olarak `main` ve klasor olarak `/root` secilebilir.
+GitHub repo ayarlarından Pages bölümünde kaynak olarak `main` ve klasör olarak `/root` seçilebilir.
 
-## Veri guvenligi
+## Veri güvenliği
 
-Ogrenci bilgileri hassas veri sayilabilir. GitHub'a uygulama dosyalarini koymak uygundur; ancak indirilen JSON yedeklerini herkese acik repoya yuklememek gerekir.
+Öğrenci bilgileri hassas veri sayılabilir. GitHub'a uygulama dosyalarını koymak uygundur; ancak indirilen JSON yedeklerini herkese açık repoya yüklememek gerekir.

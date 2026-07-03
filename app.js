@@ -3,76 +3,76 @@ const STORAGE_KEY = "yaz-kampi-takip-v3";
 const weeks = [
   {
     id: 1,
-    title: "Calisma Aliskanligini Tanima",
-    skill: "Oz farkindalik",
-    product: "Mini test + 3 gun 20 dk takip",
-    parentEvidence: "Ogrenci calisirken nerede zorlandigini fark eder.",
-    badge: "Baslangic Kaşifi",
+    title: "Çalışma Alışkanlığını Tanıma",
+    skill: "Öz farkındalık",
+    product: "Mini test + 3 gün 20 dk takip",
+    parentEvidence: "Öğrenci çalışırken nerede zorlandığını fark eder.",
+    badge: "Başlangıç Kaşifi",
   },
   {
     id: 2,
     title: "Tatilde Sıkılmadan Plan Yapma",
     skill: "Planlama",
-    product: "Gunluk ve haftalik mini plan",
-    parentEvidence: "Dinlenme, gelisim ve sorumluluk dengesini kurar.",
-    badge: "Plan Ustasi",
+    product: "Günlük ve haftalık mini plan",
+    parentEvidence: "Dinlenme, gelişim ve sorumluluk dengesini kurar.",
+    badge: "Plan Ustası",
   },
   {
     id: 3,
-    title: "Unutma Egrisi ve Aralikli Tekrar",
+    title: "Unutma Eğrisi ve Aralıklı Tekrar",
     skill: "Tekrar sistemi",
-    product: "Tekrar cizelgesi",
-    parentEvidence: "Unutmanin normal oldugunu ve kisa tekrarlarin ise yaradigini gorur.",
+    product: "Tekrar çizelgesi",
+    parentEvidence: "Unutmanın normal olduğunu ve kısa tekrarların işe yaradığını görür.",
     badge: "Tekrar Stratejisti",
   },
   {
     id: 4,
-    title: "Aktif Hatirlama",
+    title: "Aktif Hatırlama",
     skill: "Kendini test etme",
-    product: "Kapat-anlat kaydi veya notu",
-    parentEvidence: "Sadece okumak yerine bakmadan anlatmayi dener.",
-    badge: "Hatirlama Dedektifi",
+    product: "Kapat-anlat kaydı veya notu",
+    parentEvidence: "Sadece okumak yerine bakmadan anlatmayı dener.",
+    badge: "Hatırlama Dedektifi",
   },
   {
     id: 5,
     title: "Odaklanma ve Dikkat",
     skill: "Dikkat yonetimi",
     product: "3 odak denemesi formu",
-    parentEvidence: "Dikkat dagiticilarini tanir ve kisa odak rutini kurar.",
-    badge: "Odak Kahramani",
+    parentEvidence: "Dikkat dağıtıcılarını tanır ve kısa odak rutini kurar.",
+    badge: "Odak Kahramanı",
   },
   {
     id: 6,
     title: "Okuma-Anlama ve Paragraf",
     skill: "Okuma stratejisi",
-    product: "3 gun okuma + tek cumle ozet",
-    parentEvidence: "Konu, ana fikir, kanit ve ozetleme calisir.",
+    product: "3 gün okuma + tek cümle özet",
+    parentEvidence: "Konu, ana fikir, kanıt ve özetleme çalışır.",
     badge: "Okuma Kaşifi",
   },
   {
     id: 7,
-    title: "Not Tutma ve Zihin Haritasi",
-    skill: "Bilgiyi duzenleme",
-    product: "Zihin haritasi + 3 cumle ozet",
-    parentEvidence: "Anahtar kelime, ozet ve gorsel duzenleme becerisi gelisir.",
-    badge: "Harita Uzmani",
+    title: "Not Tutma ve Zihin Haritası",
+    skill: "Bilgiyi düzenleme",
+    product: "Zihin haritası + 3 cümle özet",
+    parentEvidence: "Anahtar kelime, özet ve görsel düzenleme becerisi gelişir.",
+    badge: "Harita Uzmanı",
   },
   {
     id: 8,
-    title: "Yeni Doneme Guclu Baslangic",
-    skill: "Hedef ve surdurme",
-    product: "Yeni donem planı + kendime mektup",
-    parentEvidence: "Kendi guclu yonlerini ve yeni donem hedeflerini belirler.",
-    badge: "Yeni Donem Hazirim",
+    title: "Yeni Döneme Güçlü Başlangıç",
+    skill: "Hedef ve sürdürme",
+    product: "Yeni dönem planı + kendime mektup",
+    parentEvidence: "Kendi güçlü yönlerini ve yeni dönem hedeflerini belirler.",
+    badge: "Yeni Dönem Hazırım",
   },
 ];
 
 const extraBadges = [
-  "Duzenli Katilim",
-  "Sorumluluk Alani",
-  "Guzel Paylasim",
-  "Gelisim Cesareti",
-  "Kisa Ama Duzenli",
+  "Düzenli Katılım",
+  "Sorumluluk Alanı",
+  "Güzel Paylaşım",
+  "Gelişim Cesareti",
+  "Kısa Ama Düzenli",
 ];
 
 const defaultState = {
@@ -207,9 +207,9 @@ function setView(view) {
 
 function render() {
   const titles = {
-    dashboard: "Genel Bakis",
-    students: "Ogrenciler",
-    weekly: "Haftalik Takip",
+    dashboard: "Genel Bakış",
+    students: "Öğrenciler",
+    weekly: "Haftalık Takip",
     report: "Veli Raporu",
     data: "Yedek",
   };
@@ -233,7 +233,7 @@ function renderStudentPicker() {
   const select = $("#activeStudent");
   select.innerHTML = "";
   if (!state.students.length) {
-    select.innerHTML = '<option value="">Ogrenci yok</option>';
+    select.innerHTML = '<option value="">Öğrenci yok</option>';
     return;
   }
   if (!state.activeStudentId || !state.students.some((student) => student.id === state.activeStudentId)) {
@@ -278,12 +278,12 @@ function renderDashboard() {
 
   const summary = $("#studentSummary");
   if (!activeStudent) {
-    $("#selectedStudentHint").textContent = "Kayitlari gormek icin ogrenci ekle.";
-    summary.innerHTML = '<div class="empty-state">Ogrenci eklediginde burada ilerleme, urun ve rozet ozeti gorunecek.</div>';
+    $("#selectedStudentHint").textContent = "Kayıtları görmek için öğrenci ekle.";
+    summary.innerHTML = '<div class="empty-state">Öğrenci eklediğinde burada ilerleme, ürün ve rozet özeti görünecek.</div>';
     return;
   }
 
-  $("#selectedStudentHint").textContent = `${activeStudent.name} icin kisa durum.`;
+  $("#selectedStudentHint").textContent = `${activeStudent.name} için kısa durum.`;
   const progress = progressForStudent(activeStudent);
   summary.innerHTML = `
     <div>
@@ -291,11 +291,11 @@ function renderDashboard() {
       <p class="brief-text">${progress}% genel ilerleme</p>
     </div>
     <div class="mini-stats">
-      <div class="mini-stat"><span>Urun</span><strong>${productCountForStudent(activeStudent)}/8</strong></div>
+      <div class="mini-stat"><span>Ürün</span><strong>${productCountForStudent(activeStudent)}/8</strong></div>
       <div class="mini-stat"><span>Rozet</span><strong>${badgeCountForStudent(activeStudent)}</strong></div>
-      <div class="mini-stat"><span>Sinif</span><strong>${activeStudent.grade.replace(" sinif", "")}</strong></div>
+      <div class="mini-stat"><span>Sınıf</span><strong>${activeStudent.grade.replace(" sınıf", "")}</strong></div>
     </div>
-    <div class="empty-state">${activeStudent.note || "Bu ogrenci icin ozel veli notu henuz eklenmedi."}</div>
+    <div class="empty-state">${activeStudent.note || "Bu öğrenci için özel veli notu henüz eklenmedi."}</div>
   `;
 }
 
@@ -309,7 +309,7 @@ function renderGroupProgressChart() {
   const target = $("#groupProgressChart");
   if (!target) return;
   if (!state.students.length) {
-    target.innerHTML = chartEmpty("Ogrenci eklediginde grup ilerlemesi burada gorunecek.");
+    target.innerHTML = chartEmpty("Öğrenci eklediğinde grup ilerlemesi burada görünecek.");
     return;
   }
 
@@ -334,7 +334,7 @@ function renderStudentTrendChart(student) {
   const target = $("#studentTrendChart");
   if (!target) return;
   if (!student) {
-    target.innerHTML = chartEmpty("Bir ogrenci sectiginde hafta hafta gidisat cizgisi gorunecek.");
+    target.innerHTML = chartEmpty("Bir öğrenci seçtiğinde hafta hafta gidişat çizgisi görünecek.");
     return;
   }
 
@@ -346,14 +346,14 @@ function renderSkillChart(student) {
   const target = $("#skillChart");
   if (!target) return;
   if (!student) {
-    target.innerHTML = chartEmpty("Katilim, strateji ve Turkce becerisi puanlari icin once ogrenci sec.");
+    target.innerHTML = chartEmpty("Katılım, strateji ve Türkçe becerisi puanları için önce öğrenci seç.");
     return;
   }
 
   const skills = [
-    { label: "Katilim", value: averageScore(student, "participation") },
+    { label: "Katılım", value: averageScore(student, "participation") },
     { label: "Strateji", value: averageScore(student, "strategy") },
-    { label: "Turkce", value: averageScore(student, "turkish") },
+    { label: "Türkçe", value: averageScore(student, "turkish") },
   ];
 
   target.innerHTML = `
@@ -416,7 +416,7 @@ function lineChartSvg(values) {
   `).join("");
 
   return `
-    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Haftalik gidisat grafigi">
+    <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Haftalık gidişat grafiği">
       <path d="${area}" fill="rgba(39, 92, 168, 0.09)"></path>
       ${grid}
       <path d="${path}" fill="none" stroke="#275ca8" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -434,7 +434,7 @@ function renderStudents() {
   const list = $("#studentList");
   list.innerHTML = "";
   if (!state.students.length) {
-    list.innerHTML = '<div class="empty-state">Ilk ogrenciyi ekleyerek basla. 9 kisilik grubun tamamini buradan yoneteceksin.</div>';
+    list.innerHTML = '<div class="empty-state">İlk öğrenciyi ekleyerek başla. 9 kişilik grubun tamamını buradan yöneteceksin.</div>';
     return;
   }
 
@@ -444,12 +444,12 @@ function renderStudents() {
     card.innerHTML = `
       <div>
         <h4>${escapeHtml(student.name)}</h4>
-        <p>${student.grade} · ${progressForStudent(student)}% ilerleme · ${productCountForStudent(student)}/8 urun</p>
+        <p>${student.grade} · ${progressForStudent(student)}% ilerleme · ${productCountForStudent(student)}/8 ürün</p>
       </div>
       <div class="student-card-actions">
-        <button class="small-button" data-action="select" data-id="${student.id}" type="button">Sec</button>
-        <button class="small-button" data-action="edit" data-id="${student.id}" type="button">Duzenle</button>
-        <button class="small-button delete" data-action="delete" data-id="${student.id}" type="button">Kaldir</button>
+        <button class="small-button" data-action="select" data-id="${student.id}" type="button">Seç</button>
+        <button class="small-button" data-action="edit" data-id="${student.id}" type="button">Düzenle</button>
+        <button class="small-button delete" data-action="delete" data-id="${student.id}" type="button">Kaldır</button>
       </div>
     `;
     list.append(card);
@@ -480,7 +480,7 @@ function renderWeeklyForm() {
     </div>
     <div class="brief-grid">
       <div class="brief-item"><span>Beceri</span><strong>${week.skill}</strong></div>
-      <div class="brief-item"><span>Urun</span><strong>${week.product}</strong></div>
+      <div class="brief-item"><span>Ürün</span><strong>${week.product}</strong></div>
       <div class="brief-item"><span>Hafta rozeti</span><strong>${week.badge}</strong></div>
     </div>
   `;
@@ -520,7 +520,7 @@ function renderReport() {
   if (!student) {
     $("#overallComment").value = "";
     $("#nextStep").value = "";
-    paper.innerHTML = '<div class="empty-state">Rapor olusturmak icin once ogrenci ekle.</div>';
+    paper.innerHTML = '<div class="empty-state">Rapor oluşturmak için önce öğrenci ekle.</div>';
     return;
   }
 
@@ -536,7 +536,7 @@ function renderReport() {
         <td>${week.id}</td>
         <td><strong>${week.title}</strong><br>${week.skill}</td>
         <td>${escapeHtml(record.artifact || week.product)}</td>
-        <td>${escapeHtml(record.teacherNote || "Kayit bekliyor.")}</td>
+        <td>${escapeHtml(record.teacherNote || "Kayıt bekliyor.")}</td>
       </tr>
     `;
   }).join("");
@@ -544,37 +544,37 @@ function renderReport() {
   paper.innerHTML = `
     <header>
       <div>
-        <p class="eyebrow">8 haftalik ogrenme pasaportu</p>
-        <h2>${escapeHtml(student.name)} - Veli Gelisim Raporu</h2>
+        <p class="eyebrow">8 haftalık öğrenme pasaportu</p>
+        <h2>${escapeHtml(student.name)} - Veli Gelişim Raporu</h2>
       </div>
       <div class="report-meta">
         <strong>${student.grade}</strong><br>
-        Ilerleme: ${progress}%<br>
-        Urun: ${productCountForStudent(student)}/8
+        İlerleme: ${progress}%<br>
+        Ürün: ${productCountForStudent(student)}/8
       </div>
     </header>
 
     <section class="report-section">
-      <h3>Kisa Degerlendirme</h3>
+      <h3>Kısa Değerlendirme</h3>
       <p>${escapeHtml(student.overallComment || autoOverall(student))}</p>
     </section>
 
     <section class="report-section">
-      <h3>Haftalik Gelisim Grafigi</h3>
+      <h3>Haftalık Gelişim Grafiği</h3>
       <div class="report-chart">
         ${lineChartSvg(weeks.map((week) => Math.round(completionForRecord(getWeeklyRecord(student, week.id)) * 100)))}
       </div>
     </section>
 
     <section class="report-section">
-      <h3>Haftalik Kanitlar</h3>
+      <h3>Haftalık Kanıtlar</h3>
       <table class="report-table">
         <thead>
           <tr>
             <th>Hafta</th>
             <th>Beceri</th>
-            <th>Urun / Kanit</th>
-            <th>Ogretmen Gozlemi</th>
+            <th>Ürün / Kanıt</th>
+            <th>Öğretmen Gözlemi</th>
           </tr>
         </thead>
         <tbody>${rows}</tbody>
@@ -582,12 +582,12 @@ function renderReport() {
     </section>
 
     <section class="report-section">
-      <h3>Ogrencinin Kendi Cumleleri</h3>
+      <h3>Öğrencinin Kendi Cümleleri</h3>
       <ul>
         ${weeks.map((week) => {
           const text = getWeeklyRecord(student, week.id).studentReflection;
           return text ? `<li>${escapeHtml(text)}</li>` : "";
-        }).join("") || "<li>Henuz ogrenci yansitmasi eklenmedi.</li>"}
+        }).join("") || "<li>Henüz öğrenci yansıtması eklenmedi.</li>"}
       </ul>
     </section>
 
@@ -599,7 +599,7 @@ function renderReport() {
     </section>
 
     <section class="report-section">
-      <h3>Yeni Donem Icin Oneri</h3>
+      <h3>Yeni Dönem İçin Öneri</h3>
       <p>${escapeHtml(student.nextStep || autoNextStep(student))}</p>
     </section>
   `;
@@ -608,20 +608,20 @@ function renderReport() {
 function autoOverall(student) {
   const progress = progressForStudent(student);
   if (progress >= 75) {
-    return "Ogrenci kamp boyunca duzenli katilim ve somut urunlerle guclu bir ogrenme sureci ortaya koydu. Planlama, odaklanma ve okuma-anlama basliklarinda takip edilebilir gelisim kanitlari olustu.";
+    return "Öğrenci kamp boyunca düzenli katılım ve somut ürünlerle güçlü bir öğrenme süreci ortaya koydu. Planlama, odaklanma ve okuma-anlama başlıklarında takip edilebilir gelişim kanıtları oluştu.";
   }
   if (progress >= 40) {
-    return "Ogrenci kamp surecinde birden fazla beceriyi denedi ve kendisi icin ise yarayan yontemleri fark etmeye basladi. Duzenli uygulama arttikca bu kazanımlar daha kalici hale gelecektir.";
+    return "Öğrenci kamp sürecinde birden fazla beceriyi denedi ve kendisi için işe yarayan yöntemleri fark etmeye başladı. Düzenli uygulama arttıkça bu kazanımlar daha kalıcı hale gelecektir.";
   }
-  return "Ogrencinin kayitlari henuz sinirli. Haftalik urunler tamamlandikca planlama, odaklanma ve okuma-anlama alanlarindaki gelisim daha net gorulecektir.";
+  return "Öğrencinin kayıtları henüz sınırlı. Haftalık ürünler tamamlandıkça planlama, odaklanma ve okuma-anlama alanlarındaki gelişim daha net görülecektir.";
 }
 
 function autoNextStep(student) {
   const weakWeeks = weeks.filter((week) => !getWeeklyRecord(student, week.id).productDone).slice(0, 2);
   if (weakWeeks.length) {
-    return `Yeni doneme baslarken haftada 3 gun 20 dakikalik kisa calisma rutini onerilir. Oncelikli destek alanlari: ${weakWeeks.map((week) => week.title).join(", ")}.`;
+    return `Yeni döneme başlarken haftada 3 gün 20 dakikalık kısa çalışma rutini önerilir. Öncelikli destek alanları: ${weakWeeks.map((week) => week.title).join(", ")}.`;
   }
-  return "Yeni donemde haftada 3 gun 20 dakikalik odak calismasi, 3 gun 15 dakikalik okuma ve haftada 1 kisa tekrar rutini surdurulebilir.";
+  return "Yeni dönemde haftada 3 gün 20 dakikalık odak çalışması, 3 gün 15 dakikalık okuma ve haftada 1 kısa tekrar rutini sürdürülebilir.";
 }
 
 function bindEvents() {
@@ -663,9 +663,9 @@ function bindEvents() {
     }
 
     if (button.dataset.action === "edit") {
-      const name = prompt("Ogrenci adi", student.name);
+      const name = prompt("Öğrenci adı", student.name);
       if (name === null) return;
-      const grade = prompt("Sinif", student.grade);
+      const grade = prompt("Sınıf", student.grade);
       if (grade === null) return;
       const note = prompt("Veli notu", student.note || "");
       if (note === null) return;
@@ -675,7 +675,7 @@ function bindEvents() {
     }
 
     if (button.dataset.action === "delete") {
-      const ok = confirm(`${student.name} kaydi kaldirilsin mi?`);
+      const ok = confirm(`${student.name} kaydı kaldırılsın mı?`);
       if (!ok) return;
       state.students = state.students.filter((item) => item.id !== student.id);
       if (state.activeStudentId === student.id) {
@@ -742,19 +742,19 @@ function bindEvents() {
     const text = await file.text();
     try {
       const restored = JSON.parse(text);
-      if (!Array.isArray(restored.students)) throw new Error("Gecersiz dosya");
+      if (!Array.isArray(restored.students)) throw new Error("Geçersiz dosya");
       state = { ...structuredClone(defaultState), ...restored };
       saveState();
       render();
     } catch {
-      alert("Bu JSON dosyasi yuklenemedi.");
+      alert("Bu JSON dosyası yüklenemedi.");
     } finally {
       event.target.value = "";
     }
   });
 
   $("#resetApp").addEventListener("click", () => {
-    const ok = confirm("Tum yerel veriler temizlensin mi? Once yedek almani oneririm.");
+    const ok = confirm("Tüm yerel veriler temizlensin mi? Önce yedek almanı öneririm.");
     if (!ok) return;
     localStorage.removeItem(STORAGE_KEY);
     state = structuredClone(defaultState);
@@ -769,16 +769,16 @@ function downloadJson() {
 
 function downloadCsv() {
   const header = [
-    "Ogrenci",
-    "Sinif",
+    "Öğrenci",
+    "Sınıf",
     "Hafta",
     "Konu",
-    "Katilim",
-    "Urun",
-    "Oz Degerlendirme",
+    "Katılım",
+    "Ürün",
+    "Öz Değerlendirme",
     "Strateji",
-    "Turkce",
-    "Gozlem",
+    "Türkçe",
+    "Gözlem",
   ];
   const rows = state.students.flatMap((student) => weeks.map((week) => {
     const record = getWeeklyRecord(student, week.id);
@@ -799,7 +799,7 @@ function downloadCsv() {
     .map((row) => row.map((cell) => `"${String(cell ?? "").replaceAll('"', '""')}"`).join(","))
     .join("\n");
   const blob = new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8" });
-  downloadBlob(blob, `yaz-kampi-ozet-${todayStamp()}.csv`);
+  downloadBlob(blob, `yaz-kampi-özet-${todayStamp()}.csv`);
 }
 
 function downloadBlob(blob, filename) {

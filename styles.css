@@ -222,12 +222,12 @@ textarea:focus {
 }
 
 .icon-button {
-  width: 42px;
-  padding: 0;
+  min-width: 64px;
+  padding: 0 12px;
   background: #fff;
   color: var(--blue);
   border: 1px solid var(--line);
-  font-size: 20px;
+  font-size: 13px;
 }
 
 .view {

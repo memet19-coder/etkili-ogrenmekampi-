@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Yaz Kampi Takip</title>
+    <title>Yaz Kampı Takip</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -12,23 +12,23 @@
         <div class="brand">
           <div class="brand-mark" aria-hidden="true">YK</div>
           <div>
-            <h1>Yaz Kampi</h1>
-            <p>Ogrenci takip ve veli raporu</p>
+            <h1>Yaz Kampı</h1>
+            <p>Öğrenci takip ve veli raporu</p>
           </div>
         </div>
 
-        <nav class="nav" aria-label="Ana bolumler">
+        <nav class="nav" aria-label="Ana bölümler">
           <button class="nav-item active" data-view="dashboard" type="button">
             <span aria-hidden="true">01</span>
-            Genel Bakis
+            Genel Bakış
           </button>
           <button class="nav-item" data-view="students" type="button">
             <span aria-hidden="true">02</span>
-            Ogrenciler
+            Öğrenciler
           </button>
           <button class="nav-item" data-view="weekly" type="button">
             <span aria-hidden="true">03</span>
-            Haftalik Takip
+            Haftalık Takip
           </button>
           <button class="nav-item" data-view="report" type="button">
             <span aria-hidden="true">04</span>
@@ -40,8 +40,8 @@
           </button>
         </nav>
 
-        <section class="student-picker" aria-label="Secili ogrenci">
-          <label for="activeStudent">Secili ogrenci</label>
+        <section class="student-picker" aria-label="Seçili öğrenci">
+          <label for="activeStudent">Seçili öğrenci</label>
           <select id="activeStudent"></select>
         </section>
       </aside>
@@ -49,23 +49,23 @@
       <main class="main">
         <section class="topbar">
           <div>
-            <p class="eyebrow">8 haftalik ogrenme pasaportu</p>
-            <h2 id="pageTitle">Genel Bakis</h2>
+            <p class="eyebrow">8 haftalık öğrenme pasaportu</p>
+            <h2 id="pageTitle">Genel Bakış</h2>
           </div>
           <div class="topbar-actions">
-            <button class="icon-button" id="saveSnapshot" title="Yedek indir" type="button">↓</button>
-            <button class="primary-action" id="printReport" type="button">Raporu Yazdir</button>
+            <button class="icon-button" id="saveSnapshot" title="Yedek indir" type="button">İndir</button>
+            <button class="primary-action" id="printReport" type="button">Raporu Yazdır</button>
           </div>
         </section>
 
         <section class="view active" id="dashboardView" aria-labelledby="pageTitle">
           <div class="metric-grid">
             <article class="metric">
-              <span>Ogrenci</span>
+              <span>Öğrenci</span>
               <strong id="metricStudents">0</strong>
             </article>
             <article class="metric">
-              <span>Tamamlanan urun</span>
+              <span>Tamamlanan ürün</span>
               <strong id="metricProducts">0</strong>
             </article>
             <article class="metric">
@@ -81,24 +81,24 @@
           <div class="analytics-grid">
             <section class="panel chart-panel">
               <div class="section-head">
-                <h3>Grup Ilerlemesi</h3>
-                <p>Tum ogrencilerin 8 haftalik urun tamamlama durumu.</p>
+                <h3>Grup İlerlemesi</h3>
+                <p>Tüm öğrencilerin 8 haftalık ürün tamamlama durumu.</p>
               </div>
               <div class="chart-box" id="groupProgressChart"></div>
             </section>
 
             <section class="panel chart-panel">
               <div class="section-head">
-                <h3>Ogrenci Gidisati</h3>
-                <p>Secili ogrencinin hafta hafta ilerleme yuzdesi.</p>
+                <h3>Öğrenci Gidişatı</h3>
+                <p>Seçili öğrencinin hafta hafta ilerleme yüzdesi.</p>
               </div>
               <div class="chart-box" id="studentTrendChart"></div>
             </section>
 
             <section class="panel chart-panel">
               <div class="section-head">
-                <h3>Beceri Puanlari</h3>
-                <p>Katilim, strateji kullanimi ve Turkce beceri ortalamasi.</p>
+                <h3>Beceri Puanları</h3>
+                <p>Katılım, strateji kullanımı ve Türkçe beceri ortalaması.</p>
               </div>
               <div class="chart-box" id="skillChart"></div>
             </section>
@@ -107,16 +107,16 @@
           <div class="dashboard-grid">
             <section class="panel">
               <div class="section-head">
-                <h3>Kamp Haritasi</h3>
-                <p>Her hafta veli raporuna girecek somut bir kanit uretir.</p>
+                <h3>Kamp Haritası</h3>
+                <p>Her hafta veli raporuna girecek somut bir kanıt üretir.</p>
               </div>
               <div class="week-map" id="weekMap"></div>
             </section>
 
             <section class="panel">
               <div class="section-head">
-                <h3>Secili Ogrenci</h3>
-                <p id="selectedStudentHint">Kayitlari gormek icin ogrenci ekle.</p>
+                <h3>Seçili Öğrenci</h3>
+                <p id="selectedStudentHint">Kayıtları görmek için öğrenci ekle.</p>
               </div>
               <div class="student-summary" id="studentSummary"></div>
             </section>
@@ -127,33 +127,33 @@
           <div class="two-column">
             <form class="panel form-panel" id="studentForm">
               <div class="section-head">
-                <h3>Ogrenci Ekle</h3>
-                <p>9 kisilik grup icin tum kayitlari buradan acabilirsin.</p>
+                <h3>Öğrenci Ekle</h3>
+                <p>9 kişilik grup için tüm kayıtları buradan açabilirsin.</p>
               </div>
               <label>
-                Ogrenci adi
-                <input id="studentName" required autocomplete="off" placeholder="Ornek: Zeynep A." />
+                Öğrenci adı
+                <input id="studentName" required autocomplete="off" placeholder="Örnek: Zeynep A." />
               </label>
               <label>
-                Sinif
+                Sınıf
                 <select id="studentGrade">
-                  <option>5. sinif</option>
-                  <option>6. sinif</option>
-                  <option>7. sinif</option>
-                  <option>8. sinif</option>
+                  <option>5. sınıf</option>
+                  <option>6. sınıf</option>
+                  <option>7. sınıf</option>
+                  <option>8. sınıf</option>
                 </select>
               </label>
               <label>
                 Veli notu
-                <textarea id="studentNote" rows="4" placeholder="Velinin dikkat etmesini istedigin ozel notlar"></textarea>
+                <textarea id="studentNote" rows="4" placeholder="Velinin dikkat etmesini istediğin özel notlar"></textarea>
               </label>
-              <button class="primary-action" type="submit">Ogrenci Kaydet</button>
+              <button class="primary-action" type="submit">Öğrenci Kaydet</button>
             </form>
 
             <section class="panel">
               <div class="section-head">
-                <h3>Ogrenci Listesi</h3>
-                <p>Sec, duzenle veya kaldir.</p>
+                <h3>Öğrenci Listesi</h3>
+                <p>Seç, düzenle veya kaldır.</p>
               </div>
               <div class="student-list" id="studentList"></div>
             </section>
@@ -164,10 +164,10 @@
           <div class="panel">
             <div class="section-head weekly-head">
               <div>
-                <h3>Haftalik Takip</h3>
-                <p>Her hafta icin katilim, urun, gozlem ve rozet kaydi.</p>
+                <h3>Haftalık Takip</h3>
+                <p>Her hafta için katılım, ürün, gözlem ve rozet kaydı.</p>
               </div>
-              <select id="weekSelect" aria-label="Hafta secimi"></select>
+              <select id="weekSelect" aria-label="Hafta seçimi"></select>
             </div>
 
             <form class="weekly-form" id="weeklyForm">
@@ -176,15 +176,15 @@
               <div class="check-grid">
                 <label class="check-card">
                   <input id="attendance" type="checkbox" />
-                  <span>Derse katildi</span>
+                  <span>Derse katıldı</span>
                 </label>
                 <label class="check-card">
                   <input id="productDone" type="checkbox" />
-                  <span>Haftalik urunu tamamladi</span>
+                  <span>Haftalık ürünü tamamladı</span>
                 </label>
                 <label class="check-card">
                   <input id="reflectionDone" type="checkbox" />
-                  <span>Oz degerlendirme yapti</span>
+                  <span>Öz değerlendirme yaptı</span>
                 </label>
                 <label class="check-card">
                   <input id="familyShared" type="checkbox" />
@@ -194,46 +194,46 @@
 
               <div class="score-grid">
                 <label>
-                  Katilim
+                  Katılım
                   <select id="scoreParticipation">
-                    <option value="0">0 - Henuz gorulmedi</option>
-                    <option value="1">1 - Destekle yapti</option>
-                    <option value="2">2 - Bagimsiz yapti</option>
+                    <option value="0">0 - Henüz görülmedi</option>
+                    <option value="1">1 - Destekle yaptı</option>
+                    <option value="2">2 - Bağımsız yaptı</option>
                   </select>
                 </label>
                 <label>
-                  Strateji kullanimi
+                  Strateji kullanımı
                   <select id="scoreStrategy">
-                    <option value="0">0 - Henuz gorulmedi</option>
-                    <option value="1">1 - Destekle yapti</option>
-                    <option value="2">2 - Bagimsiz yapti</option>
+                    <option value="0">0 - Henüz görülmedi</option>
+                    <option value="1">1 - Destekle yaptı</option>
+                    <option value="2">2 - Bağımsız yaptı</option>
                   </select>
                 </label>
                 <label>
-                  Turkce becerisi
+                  Türkçe becerisi
                   <select id="scoreTurkish">
-                    <option value="0">0 - Henuz gorulmedi</option>
-                    <option value="1">1 - Destekle yapti</option>
-                    <option value="2">2 - Bagimsiz yapti</option>
+                    <option value="0">0 - Henüz görülmedi</option>
+                    <option value="1">1 - Destekle yaptı</option>
+                    <option value="2">2 - Bağımsız yaptı</option>
                   </select>
                 </label>
               </div>
 
               <label>
-                Ogrenci urunu / kanit
-                <textarea id="artifact" rows="3" placeholder="Ornek: Haftalik mini planini doldurdu; 3 gun uygulama hedefi belirledi."></textarea>
+                Öğrenci ürünü / kanıt
+                <textarea id="artifact" rows="3" placeholder="Örnek: Haftalık mini planını doldurdu; 3 gün uygulama hedefi belirledi."></textarea>
               </label>
               <label>
-                Ogretmen gozlemi
-                <textarea id="teacherNote" rows="4" placeholder="Somut ve veliye anlatilabilir gozlem notu"></textarea>
+                Öğretmen gözlemi
+                <textarea id="teacherNote" rows="4" placeholder="Somut ve veliye anlatılabilir gözlem notu"></textarea>
               </label>
               <label>
-                Ogrencinin kendi cumlesi
-                <textarea id="studentReflection" rows="3" placeholder="Ornek: Kisa calisinca daha kolay basladigimi fark ettim."></textarea>
+                Öğrencinin kendi cümlesi
+                <textarea id="studentReflection" rows="3" placeholder="Örnek: Kısa çalışınca daha kolay başladığımı fark ettim."></textarea>
               </label>
               <label>
-                Yeni donem / ev icin onerim
-                <textarea id="recommendation" rows="3" placeholder="Ornek: Haftada 3 gun 20 dakikalik odak calismasi surdurulsun."></textarea>
+                Yeni dönem / ev için önerim
+                <textarea id="recommendation" rows="3" placeholder="Örnek: Haftada 3 gün 20 dakikalık odak çalışması sürdürülsün."></textarea>
               </label>
 
               <fieldset class="badge-field">
@@ -241,7 +241,7 @@
                 <div class="badge-options" id="badgeOptions"></div>
               </fieldset>
 
-              <button class="primary-action" type="submit">Hafta Kaydini Sakla</button>
+              <button class="primary-action" type="submit">Hafta Kaydını Sakla</button>
             </form>
           </div>
         </section>
@@ -251,17 +251,17 @@
             <section class="panel report-controls">
               <div class="section-head">
                 <h3>Rapor Ayarlari</h3>
-                <p>Veliye gondermeden once metinleri duzenleyebilirsin.</p>
+                <p>Veliye göndermeden önce metinleri düzenleyebilirsin.</p>
               </div>
               <label>
-                Genel degerlendirme
-                <textarea id="overallComment" rows="5" placeholder="8 haftalik surecte genel gozlemin"></textarea>
+                Genel değerlendirme
+                <textarea id="overallComment" rows="5" placeholder="8 haftalık süreçte genel gözlemin"></textarea>
               </label>
               <label>
-                Sonraki adim onerisi
-                <textarea id="nextStep" rows="5" placeholder="Yeni doneme baslarken aileye ve ogrenciye oneriler"></textarea>
+                Sonraki adım önerisi
+                <textarea id="nextStep" rows="5" placeholder="Yeni döneme başlarken aileye ve öğrenciye öneriler"></textarea>
               </label>
-              <button class="primary-action" id="saveReportNotes" type="button">Rapor Notlarini Sakla</button>
+              <button class="primary-action" id="saveReportNotes" type="button">Rapor Notlarını Sakla</button>
             </section>
 
             <article class="report-paper" id="reportPaper" aria-label="Veli raporu"></article>
@@ -273,22 +273,22 @@
             <section class="panel">
               <div class="section-head">
                 <h3>Yedek Al</h3>
-                <p>Bilgisayar degistirirken veya GitHub'a koymadan once JSON yedegi indir.</p>
+                <p>Bilgisayar değiştirirken veya GitHub'a koymadan önce JSON yedeği indir.</p>
               </div>
-              <button class="primary-action" id="downloadJson" type="button">JSON Yedegi Indir</button>
-              <button class="secondary-action" id="downloadCsv" type="button">CSV Ozet Indir</button>
+              <button class="primary-action" id="downloadJson" type="button">JSON Yedeği İndir</button>
+              <button class="secondary-action" id="downloadCsv" type="button">CSV Özet İndir</button>
             </section>
 
             <section class="panel">
               <div class="section-head">
-                <h3>Yedekten Yukle</h3>
-                <p>Daha once indirdigin JSON dosyasini geri yukle.</p>
+                <h3>Yedekten Yükle</h3>
+                <p>Daha önce indirdiğin JSON dosyasını geri yükle.</p>
               </div>
               <label class="file-drop">
                 <input id="restoreFile" type="file" accept="application/json" />
-                <span>JSON dosyasi sec</span>
+                <span>JSON dosyası seç</span>
               </label>
-              <button class="danger-action" id="resetApp" type="button">Tum Yerel Veriyi Temizle</button>
+              <button class="danger-action" id="resetApp" type="button">Tüm Yerel Veriyi Temizle</button>
             </section>
           </div>
         </section>
