@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Yaz Kampi Takip</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Uygulama menusu">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">YK</div>
+          <div>
+            <h1>Yaz Kampi</h1>
+            <p>Ogrenci takip ve veli raporu</p>
+          </div>
+        </div>
+
+        <nav class="nav" aria-label="Ana bolumler">
+          <button class="nav-item active" data-view="dashboard" type="button">
+            <span aria-hidden="true">⌂</span>
+            Genel Bakis
+          </button>
+          <button class="nav-item" data-view="students" type="button">
+            <span aria-hidden="true">＋</span>
+            Ogrenciler
+          </button>
+          <button class="nav-item" data-view="weekly" type="button">
+            <span aria-hidden="true">□</span>
+            Haftalik Takip
+          </button>
+          <button class="nav-item" data-view="report" type="button">
+            <span aria-hidden="true">◉</span>
+            Veli Raporu
+          </button>
+          <button class="nav-item" data-view="data" type="button">
+            <span aria-hidden="true">⇅</span>
+            Yedek
+          </button>
+        </nav>
+
+        <section class="student-picker" aria-label="Secili ogrenci">
+          <label for="activeStudent">Secili ogrenci</label>
+          <select id="activeStudent"></select>
+        </section>
+      </aside>
+
+      <main class="main">
+        <section class="topbar">
+          <div>
+            <p class="eyebrow">8 haftalik ogrenme pasaportu</p>
+            <h2 id="pageTitle">Genel Bakis</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="saveSnapshot" title="Yedek indir" type="button">⇩</button>
+            <button class="primary-action" id="printReport" type="button">Raporu Yazdir</button>
+          </div>
+        </section>
+
+        <section class="view active" id="dashboardView" aria-labelledby="pageTitle">
+          <div class="metric-grid">
+            <article class="metric">
+              <span>Ogrenci</span>
+              <strong id="metricStudents">0</strong>
+            </article>
+            <article class="metric">
+              <span>Tamamlanan urun</span>
+              <strong id="metricProducts">0</strong>
+            </article>
+            <article class="metric">
+              <span>Ortalama ilerleme</span>
+              <strong id="metricProgress">0%</strong>
+            </article>
+            <article class="metric">
+              <span>Verilen rozet</span>
+              <strong id="metricBadges">0</strong>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel">
+              <div class="section-head">
+                <h3>Kamp Haritasi</h3>
+                <p>Her hafta veli raporuna girecek somut bir kanit uretir.</p>
+              </div>
+              <div class="week-map" id="weekMap"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <h3>Secili Ogrenci</h3>
+                <p id="selectedStudentHint">Kayitlari gormek icin ogrenci ekle.</p>
+              </div>
+              <div class="student-summary" id="studentSummary"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="studentsView" aria-labelledby="pageTitle">
+          <div class="two-column">
+            <form class="panel form-panel" id="studentForm">
+              <div class="section-head">
+                <h3>Ogrenci Ekle</h3>
+                <p>9 kisilik grup icin tum kayitlari buradan acabilirsin.</p>
+              </div>
+              <label>
+                Ogrenci adi
+                <input id="studentName" required autocomplete="off" placeholder="Ornek: Zeynep A." />
+              </label>
+              <label>
+                Sinif
+                <select id="studentGrade">
+                  <option>5. sinif</option>
+                  <option>6. sinif</option>
+                  <option>7. sinif</option>
+                  <option>8. sinif</option>
+                </select>
+              </label>
+              <label>
+                Veli notu
+                <textarea id="studentNote" rows="4" placeholder="Velinin dikkat etmesini istedigin ozel notlar"></textarea>
+              </label>
+              <button class="primary-action" type="submit">Ogrenci Kaydet</button>
+            </form>
+
+            <section class="panel">
+              <div class="section-head">
+                <h3>Ogrenci Listesi</h3>
+                <p>Sec, duzenle veya kaldir.</p>
+              </div>
+              <div class="student-list" id="studentList"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="weeklyView" aria-labelledby="pageTitle">
+          <div class="panel">
+            <div class="section-head weekly-head">
+              <div>
+                <h3>Haftalik Takip</h3>
+                <p>Her hafta icin katilim, urun, gozlem ve rozet kaydi.</p>
+              </div>
+              <select id="weekSelect" aria-label="Hafta secimi"></select>
+            </div>
+
+            <form class="weekly-form" id="weeklyForm">
+              <div class="week-brief" id="weekBrief"></div>
+
+              <div class="check-grid">
+                <label class="check-card">
+                  <input id="attendance" type="checkbox" />
+                  <span>Derse katildi</span>
+                </label>
+                <label class="check-card">
+                  <input id="productDone" type="checkbox" />
+                  <span>Haftalik urunu tamamladi</span>
+                </label>
+                <label class="check-card">
+                  <input id="reflectionDone" type="checkbox" />
+                  <span>Oz degerlendirme yapti</span>
+                </label>
+                <label class="check-card">
+                  <input id="familyShared" type="checkbox" />
+                  <span>Veliye bilgilendirme gitti</span>
+                </label>
+              </div>
+
+              <div class="score-grid">
+                <label>
+                  Katilim
+                  <select id="scoreParticipation">
+                    <option value="0">0 - Henuz gorulmedi</option>
+                    <option value="1">1 - Destekle yapti</option>
+                    <option value="2">2 - Bagimsiz yapti</option>
+                  </select>
+                </label>
+                <label>
+                  Strateji kullanimi
+                  <select id="scoreStrategy">
+                    <option value="0">0 - Henuz gorulmedi</option>
+                    <option value="1">1 - Destekle yapti</option>
+                    <option value="2">2 - Bagimsiz yapti</option>
+                  </select>
+                </label>
+                <label>
+                  Turkce becerisi
+                  <select id="scoreTurkish">
+                    <option value="0">0 - Henuz gorulmedi</option>
+                    <option value="1">1 - Destekle yapti</option>
+                    <option value="2">2 - Bagimsiz yapti</option>
+                  </select>
+                </label>
+              </div>
+
+              <label>
+                Ogrenci urunu / kanit
+                <textarea id="artifact" rows="3" placeholder="Ornek: Haftalik mini planini doldurdu; 3 gun uygulama hedefi belirledi."></textarea>
+              </label>
+              <label>
+                Ogretmen gozlemi
+                <textarea id="teacherNote" rows="4" placeholder="Somut ve veliye anlatilabilir gozlem notu"></textarea>
+              </label>
+              <label>
+                Ogrencinin kendi cumlesi
+                <textarea id="studentReflection" rows="3" placeholder="Ornek: Kisa calisinca daha kolay basladigimi fark ettim."></textarea>
+              </label>
+              <label>
+                Yeni donem / ev icin onerim
+                <textarea id="recommendation" rows="3" placeholder="Ornek: Haftada 3 gun 20 dakikalik odak calismasi surdurulsun."></textarea>
+              </label>
+
+              <fieldset class="badge-field">
+                <legend>Rozetler</legend>
+                <div class="badge-options" id="badgeOptions"></div>
+              </fieldset>
+
+              <button class="primary-action" type="submit">Hafta Kaydini Sakla</button>
+            </form>
+          </div>
+        </section>
+
+        <section class="view" id="reportView" aria-labelledby="pageTitle">
+          <div class="report-layout">
+            <section class="panel report-controls">
+              <div class="section-head">
+                <h3>Rapor Ayarlari</h3>
+                <p>Veliye gondermeden once metinleri duzenleyebilirsin.</p>
+              </div>
+              <label>
+                Genel degerlendirme
+                <textarea id="overallComment" rows="5" placeholder="8 haftalik surecte genel gozlemin"></textarea>
+              </label>
+              <label>
+                Sonraki adim onerisi
+                <textarea id="nextStep" rows="5" placeholder="Yeni doneme baslarken aileye ve ogrenciye oneriler"></textarea>
+              </label>
+              <button class="primary-action" id="saveReportNotes" type="button">Rapor Notlarini Sakla</button>
+            </section>
+
+            <article class="report-paper" id="reportPaper" aria-label="Veli raporu"></article>
+          </div>
+        </section>
+
+        <section class="view" id="dataView" aria-labelledby="pageTitle">
+          <div class="two-column">
+            <section class="panel">
+              <div class="section-head">
+                <h3>Yedek Al</h3>
+                <p>Bilgisayar degistirirken veya GitHub'a koymadan once JSON yedegi indir.</p>
+              </div>
+              <button class="primary-action" id="downloadJson" type="button">JSON Yedegi Indir</button>
+              <button class="secondary-action" id="downloadCsv" type="button">CSV Ozet Indir</button>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <h3>Yedekten Yukle</h3>
+                <p>Daha once indirdigin JSON dosyasini geri yukle.</p>
+              </div>
+              <label class="file-drop">
+                <input id="restoreFile" type="file" accept="application/json" />
+                <span>JSON dosyasi sec</span>
+              </label>
+              <button class="danger-action" id="resetApp" type="button">Tum Yerel Veriyi Temizle</button>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
