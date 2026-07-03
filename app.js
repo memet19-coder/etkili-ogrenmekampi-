@@ -823,6 +823,7 @@ function renderReport() {
   paper.innerHTML = `
     <header>
       <div>
+        <img class="document-logo" src="assets/mg-logo.png" alt="MG logo">
         <p class="eyebrow">8 haftalık öğrenme pasaportu</p>
         <h2>${escapeHtml(student.name)} - Veli Gelişim Raporu</h2>
       </div>
@@ -918,6 +919,7 @@ function renderOutputs() {
   summary.innerHTML = `
     <header>
       <div>
+        <img class="document-logo" src="assets/mg-logo.png" alt="MG logo">
         <p class="eyebrow">Yaz kampı sınıf özeti</p>
         <h2>8 Haftalık Grup Gelişim Raporu</h2>
       </div>
@@ -948,15 +950,35 @@ function renderOutputs() {
 
   certificate.innerHTML = `
     <div class="certificate-inner">
-      <p class="eyebrow">Katılım Belgesi</p>
-      <h2>${activeStudent ? escapeHtml(activeStudent.name) : "Öğrenci Adı"}</h2>
-      <p>8 Haftalık Etkili Öğrenme Yaz Kampı'na katılmış; planlama, odaklanma, okuma-anlama, aktif hatırlama ve not tutma becerileri üzerine uygulamalı çalışmalar yapmıştır.</p>
-      <div class="certificate-meta">
-        <span>İlerleme: ${activeStudent ? progressForStudent(activeStudent) : 0}%</span>
-        <span>Ürün: ${activeStudent ? productCountForStudent(activeStudent) : 0}/8</span>
-        <span>Portfolyo: ${activeStudent ? portfolioItemsForStudent(activeStudent).length : 0}</span>
+      <div class="certificate-watermark" aria-hidden="true">
+        <img src="assets/mg-logo.png" alt="">
       </div>
-      <div class="signature-line">Öğretmen İmzası</div>
+      <div class="certificate-top">
+        <img class="certificate-logo" src="assets/mg-logo.png" alt="MG logo">
+        <div>
+          <p class="eyebrow">8 Haftalık Etkili Öğrenme Yaz Kampı</p>
+          <h3>Katılım ve Gelişim Belgesi</h3>
+        </div>
+      </div>
+      <div class="certificate-ribbon">Başarıyla Tamamladı</div>
+      <h2>${activeStudent ? escapeHtml(activeStudent.name) : "Öğrenci Adı"}</h2>
+      <p class="certificate-copy">Planlama, odaklanma, okuma-anlama, aktif hatırlama, aralıklı tekrar ve not tutma becerileri üzerine uygulamalı çalışmalara katılmış; süreç boyunca kendi öğrenme alışkanlıklarını görünür hale getirmiştir.</p>
+      <div class="certificate-meta">
+        <span><strong>${activeStudent ? progressForStudent(activeStudent) : 0}%</strong> İlerleme</span>
+        <span><strong>${activeStudent ? productCountForStudent(activeStudent) : 0}/8</strong> Ürün</span>
+        <span><strong>${activeStudent ? portfolioItemsForStudent(activeStudent).length : 0}</strong> Portfolyo</span>
+      </div>
+      <div class="certificate-footer">
+        <div class="signature-block">
+          <span></span>
+          <strong>Öğretmen İmzası</strong>
+        </div>
+        <div class="certificate-seal">MG</div>
+        <div class="signature-block">
+          <span></span>
+          <strong>Tarih</strong>
+        </div>
+      </div>
     </div>
   `;
 
