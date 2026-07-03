@@ -30,12 +30,24 @@
             <span aria-hidden="true">03</span>
             Haftalık Takip
           </button>
-          <button class="nav-item" data-view="report" type="button">
+          <button class="nav-item" data-view="portfolio" type="button">
             <span aria-hidden="true">04</span>
+            Portfolyo
+          </button>
+          <button class="nav-item" data-view="quick" type="button">
+            <span aria-hidden="true">05</span>
+            Hızlı Giriş
+          </button>
+          <button class="nav-item" data-view="outputs" type="button">
+            <span aria-hidden="true">06</span>
+            Çıktılar
+          </button>
+          <button class="nav-item" data-view="report" type="button">
+            <span aria-hidden="true">07</span>
             Veli Raporu
           </button>
           <button class="nav-item" data-view="data" type="button">
-            <span aria-hidden="true">05</span>
+            <span aria-hidden="true">08</span>
             Yedek
           </button>
         </nav>
@@ -101,6 +113,32 @@
                 <p>Katılım, strateji kullanımı ve Türkçe beceri ortalaması.</p>
               </div>
               <div class="chart-box" id="skillChart"></div>
+            </section>
+          </div>
+
+          <div class="insight-grid">
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <h3>Öğrenci Karşılaştırması</h3>
+                <p>Her öğrencinin genel ilerlemesini yan yana gör.</p>
+              </div>
+              <div class="chart-box" id="studentComparisonChart"></div>
+            </section>
+
+            <section class="panel chart-panel">
+              <div class="section-head">
+                <h3>Katılım Isı Haritası</h3>
+                <p>Hafta hafta katılım ve ürün tamamlamayı hızlıca tara.</p>
+              </div>
+              <div class="chart-box" id="attendanceHeatmap"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <h3>Takip Uyarıları</h3>
+                <p>Eksik ürün, düşük katılım ve portfolyo boşlukları.</p>
+              </div>
+              <div class="risk-list" id="riskList"></div>
             </section>
           </div>
 
@@ -231,6 +269,35 @@
                 Öğrencinin kendi cümlesi
                 <textarea id="studentReflection" rows="3" placeholder="Örnek: Kısa çalışınca daha kolay başladığımı fark ettim."></textarea>
               </label>
+              <div class="portfolio-fields">
+                <label>
+                  Portfolyo başlığı
+                  <input id="portfolioTitle" placeholder="Örnek: 2. hafta mini planım" />
+                </label>
+                <label>
+                  Ürün türü
+                  <select id="portfolioType">
+                    <option>Çalışma formu</option>
+                    <option>Fotoğraf</option>
+                    <option>Bağlantı</option>
+                    <option>Ses kaydı</option>
+                    <option>Kısa yazı</option>
+                    <option>Diğer</option>
+                  </select>
+                </label>
+                <label>
+                  Dosya / bağlantı notu
+                  <input id="portfolioLink" placeholder="Dosya adı, Drive bağlantısı veya kısa açıklama" />
+                </label>
+                <label class="check-card portfolio-showcase">
+                  <input id="portfolioShowcase" type="checkbox" />
+                  <span>Veli raporunda öne çıkar</span>
+                </label>
+              </div>
+              <label>
+                Portfolyo açıklaması
+                <textarea id="portfolioNote" rows="3" placeholder="Bu ürün öğrencinin hangi becerisini gösteriyor?"></textarea>
+              </label>
               <label>
                 Yeni dönem / ev için önerim
                 <textarea id="recommendation" rows="3" placeholder="Örnek: Haftada 3 gün 20 dakikalık odak çalışması sürdürülsün."></textarea>
@@ -246,11 +313,89 @@
           </div>
         </section>
 
+        <section class="view" id="portfolioView" aria-labelledby="pageTitle">
+          <div class="portfolio-layout">
+            <section class="panel">
+              <div class="section-head">
+                <h3>Öğrenci Portfolyosu</h3>
+                <p>Haftalık ürünler, bağlantılar, öğretmen notları ve öne çıkan çalışmalar.</p>
+              </div>
+              <div class="portfolio-grid" id="portfolioGrid"></div>
+            </section>
+
+            <section class="panel">
+              <div class="section-head">
+                <h3>Portfolyo Özeti</h3>
+                <p>Veliye gösterilecek ürün kanıtlarının kısa durumu.</p>
+              </div>
+              <div class="portfolio-summary" id="portfolioSummary"></div>
+            </section>
+          </div>
+        </section>
+
+        <section class="view" id="quickView" aria-labelledby="pageTitle">
+          <div class="panel">
+            <div class="section-head weekly-head">
+              <div>
+                <h3>Ders Sonrası Hızlı Giriş</h3>
+                <p>Tek ekranda tüm öğrencilerin haftalık durumunu işaretle.</p>
+              </div>
+              <select id="quickWeekSelect" aria-label="Hızlı giriş haftası"></select>
+            </div>
+            <div class="quick-actions">
+              <button class="secondary-action" id="markAllAttendance" type="button">Tüm Katılımı İşaretle</button>
+              <button class="secondary-action" id="markAllFamilyShared" type="button">Veli Mesajını İşaretle</button>
+              <button class="primary-action" id="saveQuickEntry" type="button">Hızlı Girişi Sakla</button>
+            </div>
+            <div class="quick-table-wrap">
+              <table class="quick-table">
+                <thead>
+                  <tr>
+                    <th>Öğrenci</th>
+                    <th>Katılım</th>
+                    <th>Ürün</th>
+                    <th>Öz Değerlendirme</th>
+                    <th>Veli</th>
+                    <th>Katılım Puanı</th>
+                    <th>Strateji</th>
+                    <th>Türkçe</th>
+                    <th>Kısa Not</th>
+                  </tr>
+                </thead>
+                <tbody id="quickEntryBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="outputsView" aria-labelledby="pageTitle">
+          <div class="outputs-layout">
+            <section class="panel">
+              <div class="section-head">
+                <h3>Profesyonel Çıktılar</h3>
+                <p>Veli raporu dışında sınıf özeti, sertifika ve WhatsApp metni üret.</p>
+              </div>
+              <div class="output-actions">
+                <button class="primary-action" id="printClassSummary" type="button">Sınıf Özetini Yazdır</button>
+                <button class="secondary-action" id="printCertificate" type="button">Sertifika Yazdır</button>
+                <button class="secondary-action" id="copyWhatsappMessage" type="button">WhatsApp Metnini Kopyala</button>
+              </div>
+              <label>
+                WhatsApp veli mesajı
+                <textarea id="whatsappMessage" rows="8"></textarea>
+              </label>
+            </section>
+
+            <article class="output-paper" id="classSummaryPaper"></article>
+            <article class="certificate-paper" id="certificatePaper"></article>
+          </div>
+        </section>
+
         <section class="view" id="reportView" aria-labelledby="pageTitle">
           <div class="report-layout">
             <section class="panel report-controls">
               <div class="section-head">
-                <h3>Rapor Ayarlari</h3>
+                <h3>Rapor Ayarları</h3>
                 <p>Veliye göndermeden önce metinleri düzenleyebilirsin.</p>
               </div>
               <label>

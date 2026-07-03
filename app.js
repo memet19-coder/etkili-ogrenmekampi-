@@ -1,4 +1,4 @@
-const STORAGE_KEY = "yaz-kampi-takip-v3";
+const STORAGE_KEY = "yaz-kampi-takip-v4";
 
 const weeks = [
   {
@@ -127,6 +127,13 @@ function blankWeeklyRecord(weekId) {
     studentReflection: "",
     recommendation: "",
     badges: [],
+    portfolio: {
+      title: "",
+      type: "Çalışma formu",
+      link: "",
+      note: "",
+      showcase: false,
+    },
   };
 }
 
@@ -155,6 +162,19 @@ function getWeeklyRecord(student, weekId = state.activeWeek) {
   if (!student) return blankWeeklyRecord(weekId);
   if (!student.weekly) student.weekly = {};
   if (!student.weekly[weekId]) student.weekly[weekId] = blankWeeklyRecord(weekId);
+  const blank = blankWeeklyRecord(weekId);
+  student.weekly[weekId] = {
+    ...blank,
+    ...student.weekly[weekId],
+    scores: {
+      ...blank.scores,
+      ...(student.weekly[weekId].scores || {}),
+    },
+    portfolio: {
+      ...blank.portfolio,
+      ...(student.weekly[weekId].portfolio || {}),
+    },
+  };
   return student.weekly[weekId];
 }
 
@@ -210,6 +230,9 @@ function render() {
     dashboard: "Genel Bakış",
     students: "Öğrenciler",
     weekly: "Haftalık Takip",
+    portfolio: "Portfolyo",
+    quick: "Hızlı Giriş",
+    outputs: "Çıktılar",
     report: "Veli Raporu",
     data: "Yedek",
   };
@@ -226,6 +249,9 @@ function render() {
   renderStudents();
   renderWeekSelect();
   renderWeeklyForm();
+  renderPortfolio();
+  renderQuickEntry();
+  renderOutputs();
   renderReport();
 }
 
@@ -270,7 +296,7 @@ function renderDashboard() {
         <p>${week.product}</p>
       </div>
       <span class="status-pill ${record?.productDone ? "done" : ""}">
-        ${record?.productDone ? "Tamamlandi" : "Bekliyor"}
+        ${record?.productDone ? "Tamamlandı" : "Bekliyor"}
       </span>
     `;
     weekMap.append(row);
@@ -303,6 +329,9 @@ function renderCharts(activeStudent) {
   renderGroupProgressChart();
   renderStudentTrendChart(activeStudent);
   renderSkillChart(activeStudent);
+  renderStudentComparisonChart();
+  renderAttendanceHeatmap();
+  renderRiskList();
 }
 
 function renderGroupProgressChart() {
@@ -376,6 +405,102 @@ function renderSkillChart(student) {
   `;
 }
 
+function renderStudentComparisonChart() {
+  const target = $("#studentComparisonChart");
+  if (!target) return;
+  if (!state.students.length) {
+    target.innerHTML = chartEmpty("Öğrenci eklediğinde karşılaştırma grafiği burada görünecek.");
+    return;
+  }
+
+  const rows = [...state.students]
+    .sort((a, b) => progressForStudent(b) - progressForStudent(a))
+    .map((student) => {
+      const percent = progressForStudent(student);
+      return `
+        <div class="bar-row comparison-row">
+          <div class="bar-label">${escapeHtml(shortName(student.name))}</div>
+          <div class="bar-track" aria-label="${escapeHtml(student.name)} ${percent}%">
+            <div class="bar-fill" style="width:${percent}%"></div>
+          </div>
+          <div class="bar-value">${percent}%</div>
+        </div>
+      `;
+    }).join("");
+
+  target.innerHTML = `<div class="bar-chart">${rows}</div>`;
+}
+
+function renderAttendanceHeatmap() {
+  const target = $("#attendanceHeatmap");
+  if (!target) return;
+  if (!state.students.length) {
+    target.innerHTML = chartEmpty("Öğrenci eklediğinde haftalık katılım haritası oluşacak.");
+    return;
+  }
+
+  const header = weeks.map((week) => `<span>H${week.id}</span>`).join("");
+  const rows = state.students.map((student) => {
+    const cells = weeks.map((week) => {
+      const record = getWeeklyRecord(student, week.id);
+      const level = record.productDone ? "done" : record.attendance ? "attended" : "empty";
+      const label = record.productDone ? "Ürün tamamlandı" : record.attendance ? "Katıldı" : "Boş";
+      return `<span class="heat-cell ${level}" title="${week.id}. hafta: ${label}"></span>`;
+    }).join("");
+    return `
+      <div class="heat-row">
+        <strong>${escapeHtml(shortName(student.name))}</strong>
+        <div class="heat-cells">${cells}</div>
+      </div>
+    `;
+  }).join("");
+
+  target.innerHTML = `
+    <div class="heatmap">
+      <div class="heat-head"><span></span><div>${header}</div></div>
+      ${rows}
+      <div class="heat-legend">
+        <span><i class="heat-cell done"></i>Ürün</span>
+        <span><i class="heat-cell attended"></i>Katılım</span>
+        <span><i class="heat-cell empty"></i>Boş</span>
+      </div>
+    </div>
+  `;
+}
+
+function renderRiskList() {
+  const target = $("#riskList");
+  if (!target) return;
+  if (!state.students.length) {
+    target.innerHTML = '<div class="empty-state">Öğrenci eklediğinde takip uyarıları burada görünecek.</div>';
+    return;
+  }
+
+  const risks = state.students.flatMap((student) => {
+    const missingProducts = weeks.filter((week) => !getWeeklyRecord(student, week.id).productDone).length;
+    const missingAttendance = weeks.filter((week) => !getWeeklyRecord(student, week.id).attendance).length;
+    const portfolioCount = portfolioItemsForStudent(student).length;
+    const items = [];
+    if (missingProducts >= 3) items.push({ name: student.name, type: "Ürün eksiği", detail: `${missingProducts} haftada ürün yok` });
+    if (missingAttendance >= 3) items.push({ name: student.name, type: "Katılım takibi", detail: `${missingAttendance} haftada katılım işaretlenmemiş` });
+    if (portfolioCount < 2) items.push({ name: student.name, type: "Portfolyo", detail: "Veli raporu için ürün kanıtı az" });
+    return items;
+  }).slice(0, 8);
+
+  if (!risks.length) {
+    target.innerHTML = '<div class="empty-state">Şu an belirgin takip uyarısı yok. Güzel gidiyor.</div>';
+    return;
+  }
+
+  target.innerHTML = risks.map((risk) => `
+    <article class="risk-item">
+      <strong>${escapeHtml(risk.name)}</strong>
+      <span>${risk.type}</span>
+      <p>${risk.detail}</p>
+    </article>
+  `).join("");
+}
+
 function averageScore(student, scoreKey) {
   const values = weeks
     .map((week) => Number(getWeeklyRecord(student, week.id).scores?.[scoreKey] ?? 0))
@@ -428,6 +553,32 @@ function lineChartSvg(values) {
 
 function chartEmpty(message) {
   return `<div class="chart-empty">${message}</div>`;
+}
+
+function portfolioItemsForStudent(student) {
+  if (!student) return [];
+  return weeks.map((week) => {
+    const record = getWeeklyRecord(student, week.id);
+    const portfolio = record.portfolio || {};
+    const hasPortfolio = portfolio.title || portfolio.link || portfolio.note || record.artifact;
+    if (!hasPortfolio) return null;
+    return {
+      weekId: week.id,
+      weekTitle: week.title,
+      title: portfolio.title || week.product,
+      type: portfolio.type || "Çalışma formu",
+      link: portfolio.link || "",
+      note: portfolio.note || "",
+      artifact: record.artifact || "",
+      showcase: Boolean(portfolio.showcase),
+    };
+  }).filter(Boolean);
+}
+
+function shortName(name) {
+  const clean = String(name || "").trim();
+  if (clean.length <= 12) return clean;
+  return `${clean.slice(0, 11)}…`;
 }
 
 function renderStudents() {
@@ -495,6 +646,11 @@ function renderWeeklyForm() {
   $("#artifact").value = record.artifact || "";
   $("#teacherNote").value = record.teacherNote || "";
   $("#studentReflection").value = record.studentReflection || "";
+  $("#portfolioTitle").value = record.portfolio.title || "";
+  $("#portfolioType").value = record.portfolio.type || "Çalışma formu";
+  $("#portfolioLink").value = record.portfolio.link || "";
+  $("#portfolioNote").value = record.portfolio.note || "";
+  $("#portfolioShowcase").checked = Boolean(record.portfolio.showcase);
   $("#recommendation").value = record.recommendation || "";
 
   const badgeOptions = $("#badgeOptions");
@@ -514,6 +670,127 @@ function renderWeeklyForm() {
   });
 }
 
+function renderPortfolio() {
+  const student = getActiveStudent();
+  const grid = $("#portfolioGrid");
+  const summary = $("#portfolioSummary");
+  if (!grid || !summary) return;
+
+  if (!student) {
+    grid.innerHTML = '<div class="empty-state">Portfolyo görmek için önce öğrenci ekle.</div>';
+    summary.innerHTML = '<div class="empty-state">Öğrenci seçildiğinde ürün sayısı ve öne çıkan çalışmalar burada görünür.</div>';
+    return;
+  }
+
+  const items = portfolioItemsForStudent(student);
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty-state">Henüz portfolyo ürünü yok. Haftalık Takip ekranında portfolyo başlığı veya açıklaması ekleyebilirsin.</div>';
+  } else {
+    grid.innerHTML = items.map((item) => `
+      <article class="portfolio-card ${item.showcase ? "showcase" : ""}">
+        <div class="portfolio-card-head">
+          <span>${item.weekId}. Hafta</span>
+          <strong>${escapeHtml(item.title)}</strong>
+        </div>
+        <p>${escapeHtml(item.note || item.artifact || "Açıklama eklenmedi.")}</p>
+        <div class="portfolio-meta">
+          <span>${escapeHtml(item.type)}</span>
+          ${item.link ? `<span>${escapeHtml(item.link)}</span>` : ""}
+          ${item.showcase ? "<span>Öne çıkan</span>" : ""}
+        </div>
+      </article>
+    `).join("");
+  }
+
+  const showcaseCount = items.filter((item) => item.showcase).length;
+  const completedProducts = productCountForStudent(student);
+  summary.innerHTML = `
+    <div class="mini-stats portfolio-stats">
+      <div class="mini-stat"><span>Portfolyo</span><strong>${items.length}</strong></div>
+      <div class="mini-stat"><span>Öne Çıkan</span><strong>${showcaseCount}</strong></div>
+      <div class="mini-stat"><span>Ürün</span><strong>${completedProducts}/8</strong></div>
+    </div>
+    <div class="empty-state">
+      Veli raporunda en güçlü etki için en az 3 ürün kanıtı ve 1 öne çıkan çalışma seçmeni öneririm.
+    </div>
+  `;
+}
+
+function renderQuickEntry() {
+  const weekSelect = $("#quickWeekSelect");
+  const body = $("#quickEntryBody");
+  if (!weekSelect || !body) return;
+
+  weekSelect.innerHTML = "";
+  weeks.forEach((week) => {
+    const option = document.createElement("option");
+    option.value = week.id;
+    option.textContent = `${week.id}. Hafta - ${week.title}`;
+    option.selected = week.id === Number(state.activeWeek);
+    weekSelect.append(option);
+  });
+
+  if (!state.students.length) {
+    body.innerHTML = '<tr><td colspan="9">Öğrenci eklediğinde hızlı giriş tablosu burada görünecek.</td></tr>';
+    return;
+  }
+
+  body.innerHTML = state.students.map((student) => {
+    const record = getWeeklyRecord(student, Number(state.activeWeek));
+    return `
+      <tr data-student-id="${student.id}">
+        <td><strong>${escapeHtml(student.name)}</strong><span>${student.grade}</span></td>
+        <td><input data-field="attendance" type="checkbox" ${record.attendance ? "checked" : ""}></td>
+        <td><input data-field="productDone" type="checkbox" ${record.productDone ? "checked" : ""}></td>
+        <td><input data-field="reflectionDone" type="checkbox" ${record.reflectionDone ? "checked" : ""}></td>
+        <td><input data-field="familyShared" type="checkbox" ${record.familyShared ? "checked" : ""}></td>
+        <td>${quickScoreSelect("participation", record.scores.participation)}</td>
+        <td>${quickScoreSelect("strategy", record.scores.strategy)}</td>
+        <td>${quickScoreSelect("turkish", record.scores.turkish)}</td>
+        <td><input data-field="teacherNote" value="${escapeHtml(record.teacherNote || "")}" placeholder="Kısa gözlem"></td>
+      </tr>
+    `;
+  }).join("");
+}
+
+function quickScoreSelect(field, value) {
+  return `
+    <select data-score="${field}">
+      <option value="0" ${Number(value) === 0 ? "selected" : ""}>0</option>
+      <option value="1" ${Number(value) === 1 ? "selected" : ""}>1</option>
+      <option value="2" ${Number(value) === 2 ? "selected" : ""}>2</option>
+    </select>
+  `;
+}
+
+function saveQuickEntry() {
+  const weekId = Number(state.activeWeek);
+  $$("#quickEntryBody tr[data-student-id]").forEach((row) => {
+    const student = state.students.find((item) => item.id === row.dataset.studentId);
+    if (!student) return;
+    const record = getWeeklyRecord(student, weekId);
+    record.attendance = row.querySelector('[data-field="attendance"]').checked;
+    record.productDone = row.querySelector('[data-field="productDone"]').checked;
+    record.reflectionDone = row.querySelector('[data-field="reflectionDone"]').checked;
+    record.familyShared = row.querySelector('[data-field="familyShared"]').checked;
+    record.scores = {
+      participation: Number(row.querySelector('[data-score="participation"]').value),
+      strategy: Number(row.querySelector('[data-score="strategy"]').value),
+      turkish: Number(row.querySelector('[data-score="turkish"]').value),
+    };
+    const note = row.querySelector('[data-field="teacherNote"]').value.trim();
+    if (note) record.teacherNote = note;
+  });
+  saveState();
+  render();
+}
+
+function markQuickCheckboxes(field, checked = true) {
+  $$(`#quickEntryBody [data-field="${field}"]`).forEach((input) => {
+    input.checked = checked;
+  });
+}
+
 function renderReport() {
   const student = getActiveStudent();
   const paper = $("#reportPaper");
@@ -529,6 +806,8 @@ function renderReport() {
 
   const progress = progressForStudent(student);
   const badges = weeks.flatMap((week) => getWeeklyRecord(student, week.id).badges);
+  const portfolioItems = portfolioItemsForStudent(student);
+  const showcaseItems = portfolioItems.filter((item) => item.showcase).slice(0, 4);
   const rows = weeks.map((week) => {
     const record = getWeeklyRecord(student, week.id);
     return `
@@ -563,6 +842,19 @@ function renderReport() {
       <h3>Haftalık Gelişim Grafiği</h3>
       <div class="report-chart">
         ${lineChartSvg(weeks.map((week) => Math.round(completionForRecord(getWeeklyRecord(student, week.id)) * 100)))}
+      </div>
+    </section>
+
+    <section class="report-section">
+      <h3>Portfolyo Vitrini</h3>
+      <div class="report-portfolio">
+        ${(showcaseItems.length ? showcaseItems : portfolioItems.slice(0, 3)).map((item) => `
+          <article>
+            <strong>${item.weekId}. Hafta - ${escapeHtml(item.title)}</strong>
+            <p>${escapeHtml(item.note || item.artifact || "Ürün açıklaması eklenmedi.")}</p>
+            <span>${escapeHtml(item.type)}${item.link ? ` · ${escapeHtml(item.link)}` : ""}</span>
+          </article>
+        `).join("") || "<p>Henüz portfolyo ürünü eklenmedi.</p>"}
       </div>
     </section>
 
@@ -603,6 +895,84 @@ function renderReport() {
       <p>${escapeHtml(student.nextStep || autoNextStep(student))}</p>
     </section>
   `;
+}
+
+function renderOutputs() {
+  const summary = $("#classSummaryPaper");
+  const certificate = $("#certificatePaper");
+  const whatsapp = $("#whatsappMessage");
+  if (!summary || !certificate || !whatsapp) return;
+
+  const activeStudent = getActiveStudent();
+  const rows = state.students.map((student) => `
+    <tr>
+      <td>${escapeHtml(student.name)}</td>
+      <td>${student.grade}</td>
+      <td>${progressForStudent(student)}%</td>
+      <td>${productCountForStudent(student)}/8</td>
+      <td>${portfolioItemsForStudent(student).length}</td>
+      <td>${badgeCountForStudent(student)}</td>
+    </tr>
+  `).join("");
+
+  summary.innerHTML = `
+    <header>
+      <div>
+        <p class="eyebrow">Yaz kampı sınıf özeti</p>
+        <h2>8 Haftalık Grup Gelişim Raporu</h2>
+      </div>
+      <div class="report-meta">
+        Öğrenci: ${state.students.length}<br>
+        Ortalama ilerleme: ${averageProgress()}%<br>
+        Ürün: ${allProductCount()}
+      </div>
+    </header>
+    <section class="report-section">
+      <h3>Genel Durum</h3>
+      <p>Bu özet, öğrencilerin haftalık ürün tamamlama, katılım, portfolyo ve rozet durumlarını hızlıca görmek için hazırlanmıştır.</p>
+      <table class="report-table">
+        <thead>
+          <tr>
+            <th>Öğrenci</th>
+            <th>Sınıf</th>
+            <th>İlerleme</th>
+            <th>Ürün</th>
+            <th>Portfolyo</th>
+            <th>Rozet</th>
+          </tr>
+        </thead>
+        <tbody>${rows || '<tr><td colspan="6">Henüz öğrenci yok.</td></tr>'}</tbody>
+      </table>
+    </section>
+  `;
+
+  certificate.innerHTML = `
+    <div class="certificate-inner">
+      <p class="eyebrow">Katılım Belgesi</p>
+      <h2>${activeStudent ? escapeHtml(activeStudent.name) : "Öğrenci Adı"}</h2>
+      <p>8 Haftalık Etkili Öğrenme Yaz Kampı'na katılmış; planlama, odaklanma, okuma-anlama, aktif hatırlama ve not tutma becerileri üzerine uygulamalı çalışmalar yapmıştır.</p>
+      <div class="certificate-meta">
+        <span>İlerleme: ${activeStudent ? progressForStudent(activeStudent) : 0}%</span>
+        <span>Ürün: ${activeStudent ? productCountForStudent(activeStudent) : 0}/8</span>
+        <span>Portfolyo: ${activeStudent ? portfolioItemsForStudent(activeStudent).length : 0}</span>
+      </div>
+      <div class="signature-line">Öğretmen İmzası</div>
+    </div>
+  `;
+
+  whatsapp.value = buildWhatsappMessage(activeStudent);
+}
+
+function buildWhatsappMessage(student) {
+  if (!student) {
+    return "Merhaba, bu hafta yaz kampı kapsamında öğrencilerimizle planlı çalışma, okuma-anlama ve öğrenme stratejileri üzerine uygulamalı çalışmalar yaptık. Öğrenci seçildiğinde bu alanda kişisel veli mesajı oluşacaktır.";
+  }
+  const latestWeek = [...weeks].reverse().find((week) => {
+    const record = getWeeklyRecord(student, week.id);
+    return record.attendance || record.productDone || record.teacherNote || record.artifact;
+  }) || weeks[0];
+  const record = getWeeklyRecord(student, latestWeek.id);
+  return `Merhaba, ${student.name} için kısa kamp bilgilendirmesi paylaşmak istedim. ${latestWeek.id}. haftada "${latestWeek.title}" üzerine çalıştık. ${record.artifact || "Haftalık ürün/kanıt kaydı henüz tamamlanmadı."} Öğretmen gözlemim: ${record.teacherNote || "Gözlem notu eklenecek."} Yeni dönem için önerim: ${record.recommendation || autoNextStep(student)} Teşekkür ederim.`;
 }
 
 function autoOverall(student) {
@@ -693,6 +1063,12 @@ function bindEvents() {
     renderWeeklyForm();
   });
 
+  $("#quickWeekSelect").addEventListener("change", (event) => {
+    state.activeWeek = Number(event.target.value);
+    saveState();
+    render();
+  });
+
   $("#weeklyForm").addEventListener("submit", (event) => {
     event.preventDefault();
     const student = getActiveStudent();
@@ -710,6 +1086,13 @@ function bindEvents() {
     record.artifact = $("#artifact").value.trim();
     record.teacherNote = $("#teacherNote").value.trim();
     record.studentReflection = $("#studentReflection").value.trim();
+    record.portfolio = {
+      title: $("#portfolioTitle").value.trim(),
+      type: $("#portfolioType").value,
+      link: $("#portfolioLink").value.trim(),
+      note: $("#portfolioNote").value.trim(),
+      showcase: $("#portfolioShowcase").checked,
+    };
     record.recommendation = $("#recommendation").value.trim();
     record.badges = $$("#badgeOptions input:checked").map((input) => input.value);
     saveState();
@@ -735,6 +1118,22 @@ function bindEvents() {
   $("#saveSnapshot").addEventListener("click", downloadJson);
   $("#downloadJson").addEventListener("click", downloadJson);
   $("#downloadCsv").addEventListener("click", downloadCsv);
+  $("#saveQuickEntry").addEventListener("click", saveQuickEntry);
+  $("#markAllAttendance").addEventListener("click", () => markQuickCheckboxes("attendance", true));
+  $("#markAllFamilyShared").addEventListener("click", () => markQuickCheckboxes("familyShared", true));
+  $("#printClassSummary").addEventListener("click", () => printOutput("class-summary"));
+  $("#printCertificate").addEventListener("click", () => printOutput("certificate"));
+  $("#copyWhatsappMessage").addEventListener("click", async () => {
+    const message = $("#whatsappMessage").value;
+    try {
+      await navigator.clipboard.writeText(message);
+      alert("WhatsApp metni kopyalandı.");
+    } catch {
+      $("#whatsappMessage").select();
+      document.execCommand("copy");
+      alert("WhatsApp metni kopyalandı.");
+    }
+  });
 
   $("#restoreFile").addEventListener("change", async (event) => {
     const file = event.target.files[0];
@@ -762,6 +1161,17 @@ function bindEvents() {
   });
 }
 
+function printOutput(mode) {
+  state.activeView = "outputs";
+  saveState();
+  render();
+  document.body.dataset.printMode = mode;
+  window.print();
+  setTimeout(() => {
+    delete document.body.dataset.printMode;
+  }, 500);
+}
+
 function downloadJson() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
   downloadBlob(blob, `yaz-kampi-yedek-${todayStamp()}.json`);
@@ -787,9 +1197,9 @@ function downloadCsv() {
       student.grade,
       week.id,
       week.title,
-      record.attendance ? "Evet" : "Hayir",
-      record.productDone ? "Evet" : "Hayir",
-      record.reflectionDone ? "Evet" : "Hayir",
+      record.attendance ? "Evet" : "Hayır",
+      record.productDone ? "Evet" : "Hayır",
+      record.reflectionDone ? "Evet" : "Hayır",
       record.scores.strategy,
       record.scores.turkish,
       record.teacherNote,
