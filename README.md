@@ -1,6 +1,6 @@
-# Yaz Kampı Takip Uygulaması
+# Etkili Öğrenme Kampı Takip Uygulaması
 
-Bu uygulama 8 haftalık yaz kampı için öğrenci takibi, haftalık kanıt kaydı, rozetler ve veli gelişim raporu hazırlamak için tasarlandı.
+Bu uygulama 8 haftalık Etkili Öğrenme Kampı için öğrenci takibi, haftalık kanıt kaydı, rozetler ve veli gelişim raporu hazırlamak için tasarlandı.
 
 ## Yerel kullanım
 
@@ -19,7 +19,7 @@ Bu klasör statik bir web uygulamasıdır. GitHub Pages ile yayınlanabilir.
 ```bash
 git init
 git add .
-git commit -m "Yaz kampi takip uygulamasi"
+git commit -m "Etkili ogrenme kampi takip uygulamasi"
 git branch -M main
 git remote add origin GITHUB_REPO_ADRESI
 git push -u origin main

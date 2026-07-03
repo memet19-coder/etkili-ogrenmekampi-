@@ -920,7 +920,7 @@ function renderOutputs() {
     <header>
       <div>
         <img class="document-logo" src="assets/mg-logo.png" alt="MG logo">
-        <p class="eyebrow">Yaz kampı sınıf özeti</p>
+        <p class="eyebrow">Etkili Öğrenme Kampı sınıf özeti</p>
         <h2>8 Haftalık Grup Gelişim Raporu</h2>
       </div>
       <div class="report-meta">
@@ -956,7 +956,7 @@ function renderOutputs() {
       <div class="certificate-top">
         <img class="certificate-logo" src="assets/mg-logo.png" alt="MG logo">
         <div>
-          <p class="eyebrow">8 Haftalık Etkili Öğrenme Yaz Kampı</p>
+          <p class="eyebrow">8 Haftalık Etkili Öğrenme Kampı</p>
           <h3>Katılım ve Gelişim Belgesi</h3>
         </div>
       </div>
@@ -987,7 +987,7 @@ function renderOutputs() {
 
 function buildWhatsappMessage(student) {
   if (!student) {
-    return "Merhaba, bu hafta yaz kampı kapsamında öğrencilerimizle planlı çalışma, okuma-anlama ve öğrenme stratejileri üzerine uygulamalı çalışmalar yaptık. Öğrenci seçildiğinde bu alanda kişisel veli mesajı oluşacaktır.";
+    return "Merhaba, bu hafta Etkili Öğrenme Kampı kapsamında öğrencilerimizle planlı çalışma, okuma-anlama ve öğrenme stratejileri üzerine uygulamalı çalışmalar yaptık. Öğrenci seçildiğinde bu alanda kişisel veli mesajı oluşacaktır.";
   }
   const latestWeek = [...weeks].reverse().find((week) => {
     const record = getWeeklyRecord(student, week.id);
@@ -1196,7 +1196,7 @@ function printOutput(mode) {
 
 function downloadJson() {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
-  downloadBlob(blob, `yaz-kampi-yedek-${todayStamp()}.json`);
+  downloadBlob(blob, `etkili-ogrenme-kampi-yedek-${todayStamp()}.json`);
 }
 
 function downloadCsv() {
@@ -1231,7 +1231,7 @@ function downloadCsv() {
     .map((row) => row.map((cell) => `"${String(cell ?? "").replaceAll('"', '""')}"`).join(","))
     .join("\n");
   const blob = new Blob([`\ufeff${csv}`], { type: "text/csv;charset=utf-8" });
-  downloadBlob(blob, `yaz-kampi-özet-${todayStamp()}.csv`);
+  downloadBlob(blob, `etkili-ogrenme-kampi-özet-${todayStamp()}.csv`);
 }
 
 function downloadBlob(blob, filename) {
