@@ -49,10 +49,12 @@ button {
 .sidebar {
   position: sticky;
   top: 0;
-  height: 100vh;
+  height: 100dvh;
   padding: 22px;
   background: #152033;
   color: #fff;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .brand {
@@ -682,11 +684,12 @@ body {
   background:
     linear-gradient(180deg, #122033 0%, #182944 58%, #15313a 100%);
   border-right: 1px solid rgba(255, 255, 255, 0.08);
+  scrollbar-color: rgba(255, 255, 255, 0.36) transparent;
 }
 
 .brand {
   padding: 12px 10px 18px;
-  margin: 0 0 14px;
+  margin: 0 0 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.12);
   align-items: center;
   gap: 16px;
@@ -732,13 +735,13 @@ body {
 }
 
 .nav {
-  gap: 6px;
+  gap: 5px;
 }
 
 .nav-item {
-  min-height: 46px;
+  min-height: 40px;
   border-radius: 8px;
-  padding: 10px 11px;
+  padding: 8px 10px;
   color: #dce7f5;
   font-weight: 700;
 }
@@ -760,12 +763,18 @@ body {
 }
 
 .student-picker {
-  margin-top: 22px;
+  margin: 0 0 14px;
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .student-picker select {
   background: rgba(255, 255, 255, 0.96);
   border-color: rgba(255, 255, 255, 0.28);
+  color: #142033;
+  cursor: pointer;
 }
 
 .main {
@@ -1685,6 +1694,8 @@ textarea:focus {
   .sidebar {
     position: static;
     height: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .metric-grid,

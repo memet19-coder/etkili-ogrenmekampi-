@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Etkili Öğrenme Kampı Takip</title>
-    <link rel="stylesheet" href="styles.css?v=parent-showcase-self" />
+    <link rel="stylesheet" href="styles.css?v=sidebar-student-fix" />
   </head>
   <body>
     <div class="app-shell">
@@ -18,6 +18,11 @@
             <p>Öğrenci takip ve veli raporu</p>
           </div>
         </div>
+
+        <section class="student-picker" aria-label="Seçili öğrenci">
+          <label for="activeStudent">Seçili öğrenci</label>
+          <select id="activeStudent"></select>
+        </section>
 
         <nav class="nav" aria-label="Ana bölümler">
           <button class="nav-item active" data-view="dashboard" type="button">
@@ -66,10 +71,6 @@
           </button>
         </nav>
 
-        <section class="student-picker" aria-label="Seçili öğrenci">
-          <label for="activeStudent">Seçili öğrenci</label>
-          <select id="activeStudent"></select>
-        </section>
       </aside>
 
       <main class="main">
@@ -574,6 +575,6 @@
       </main>
     </div>
 
-    <script src="app.js?v=parent-showcase-self"></script>
+    <script src="app.js?v=sidebar-student-fix"></script>
   </body>
 </html>
